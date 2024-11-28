@@ -1,4 +1,4 @@
-//authslice.js
+// //frontend/src/Redux/slice/authslice.js
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
@@ -9,6 +9,7 @@ const initialState = {
     accessToken: null,
     refreshToken: null,
     status: false,
+    hasChannel: false,
 };
 
 export const register = createAsyncThunk('/api/v1/account/signup', async (userData, { rejectWithValue }) => {
@@ -41,7 +42,12 @@ export const logout = createAsyncThunk('/api/v1/account/logout', async (_, { rej
 const authSlice = createSlice({
     name: 'auth',
     initialState,
-    reducers: {},
+    reducers: {
+        // Synchronous reducer to update `hasChannel`
+        updateHasChannel: (state, action) => {
+            state.hasChannel = action.payload;
+        },
+    },
     extraReducers: (builder) => {
         builder
             .addCase(register.pending, (state) => {
@@ -53,6 +59,7 @@ const authSlice = createSlice({
                 state.user = action.payload.user;
                 state.accessToken = action.payload.accessToken;
                 state.refreshToken = action.payload.refreshToken;
+                state.hasChannel = action.payload.hasChannel;
             })
             .addCase(register.rejected, (state, action) => {
                 state.loading = false;
@@ -68,23 +75,25 @@ const authSlice = createSlice({
                 state.user = action.payload.user;
                 state.accessToken = action.payload.accessToken;
                 state.refreshToken = action.payload.refreshToken;
+                state.hasChannel = action.payload.hasChannel;
             })
             .addCase(login.rejected, (state, action) => {
                 state.loading = false;
-                state.status =  false;
+                state.status = false;
                 state.error = action.payload;
             })
             .addCase(logout.fulfilled, (state) => {
                 return {
                     ...state,
-                    status: false
+                    status: false,
+                    
                 };
             })
-            
             .addCase(logout.rejected, (state, action) => {
                 state.error = action.payload;
             });
     },
 });
 
+export const { updateHasChannel } = authSlice.actions; // Export the action
 export default authSlice.reducer;

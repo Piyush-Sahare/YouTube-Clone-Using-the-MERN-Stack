@@ -1,3 +1,4 @@
+//backend/models/videoModel.js
 import mongoose, {Schema} from "mongoose";
 import mongooseAggregatePaginate from "mongoose-aggregate-paginate-v2";
 
@@ -32,7 +33,11 @@ const  videoSchema = new Schema(
             type: Schema.Types.ObjectId,
             ref: "newUser",
             required: true
-        }
+        },
+        channelId: {
+            type: Schema.Types.ObjectId,
+            ref: "Channel"
+        },
 
     },
     {

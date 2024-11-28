@@ -1,4 +1,4 @@
-// AuthLayout.js
+//frontend/src/layots/AuthLayout.jsx
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';

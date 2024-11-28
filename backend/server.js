@@ -1,4 +1,4 @@
-// server.js
+// backend/server.js
 import dotenv from 'dotenv';
 import express from 'express';
 import cors from 'cors';
@@ -6,6 +6,7 @@ import cookieParser from 'cookie-parser';
 import mongoose from 'mongoose';
 import userAccount from './routes/accountRoutes.js';
 import videoRouter from './routes/videoRoutes.js';
+import channelRouter from './routes/channelRoutes.js'
 
 // Load environment variables
 dotenv.config();
@@ -38,6 +39,7 @@ app.use(cookieParser());
 // Route definitions
 app.use("/api/v1/account", userAccount);
 app.use("/api/v1/videos", videoRouter);
+app.use("/api/v1/channel",channelRouter)
 
 // Start the server after connecting to the database
 connectDB()

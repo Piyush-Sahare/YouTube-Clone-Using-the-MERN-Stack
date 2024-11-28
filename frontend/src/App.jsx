@@ -1,3 +1,4 @@
+//frontend/src/App.jsx
 import { Navbar , Sidebar  } from "./components" 
 import { Outlet } from 'react-router-dom';
 import { useState , useEffect} from "react";
@@ -7,7 +8,7 @@ function App() {
 
     useEffect(() => {
       const handleResize = () => {
-          if (window.innerWidth < 768) {
+          if (window.innerWidth < 769) {
               setIsOpen(false);
           } else {
               setIsOpen(true);

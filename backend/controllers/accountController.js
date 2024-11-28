@@ -1,18 +1,28 @@
-import { newUser } from "../models/accountModel.js";
-import { Video } from "../models/videoModel.js"
-import { asyncHandler } from "../utils/asyncHandler.js";
-import { ApiResponse } from "../utils/ApiResponse.js";
-import { ApiError } from "../utils/ApiError.js";
-import { uploadOnCloudinary } from "../utils/cloudinary.js";
-import jwt from "jsonwebtoken"
-import mongoose from "mongoose";
+//backend/controllers/accountController.js
+import { newUser } from "../models/accountModel.js"; 
+import { Video } from "../models/videoModel.js"; 
+import { asyncHandler } from "../utils/asyncHandler.js"; 
+import { ApiResponse } from "../utils/ApiResponse.js"; 
+import { ApiError } from "../utils/ApiError.js"; 
+import { uploadOnCloudinary } from "../utils/cloudinary.js"; 
+import jwt from "jsonwebtoken"; 
+import mongoose from "mongoose"; 
 
+/**
+ * Utility function to generate access and refresh tokens for a user.
+ * @param {string} userId - The ID of the user.
+ * @returns {object} - An object containing accessToken and refreshToken.
+ */
 const generateAccessAndRefreshTokens = async (userId) => {
     try {
+        // Fetch the user by ID
         const user = await newUser.findById(userId);
+
+        // Generate tokens using user methods
         const accessToken = user.generateAccessToken();
         const refreshToken = user.generateRefreshToken();
 
+        // Save the refresh token to the database
         user.refreshToken = refreshToken;
         await user.save({ validateBeforeSave: false });
 
@@ -22,15 +32,19 @@ const generateAccessAndRefreshTokens = async (userId) => {
     }
 };
 
-//register user
-
+/**
+ * Registers a new user.
+ * Validates input fields, checks for duplicate users, and creates a new user.
+ */
 const registerUser = asyncHandler(async (req, res) => {
     const { name, email, password } = req.body;
 
+    // Validate required fields
     if (!name || !email || !password) {
         throw new ApiError(400, "All fields are required");
     }
 
+    // Check if a user with the same name or email already exists
     const checkUser = await newUser.findOne({
         $or: [{ name }, { email }]
     });
@@ -39,8 +53,10 @@ const registerUser = asyncHandler(async (req, res) => {
         throw new ApiError(409, "User with email or username already exists");
     }
 
+    // Assign a default avatar
     const avatar = "https://res.cloudinary.com/drr9bsrar/image/upload/v1716498256/egt2sufg3qzyn1ofws9t.jpg";
 
+    // Create a new user record
     const user = await newUser.create({
         name,
         email,
@@ -48,35 +64,41 @@ const registerUser = asyncHandler(async (req, res) => {
         avatar
     });
 
+    // Respond with success
     return res.status(201).json(new ApiResponse(200, user, "User created successfully"));
 });
 
-
-// login user
-
+/**
+ * Logs in an existing user.
+ * Validates credentials, generates tokens, and stores them as HTTP-only cookies.
+ */
 const login = asyncHandler(async (req, res) => {
     const { email, password } = req.body;
 
+    // Validate required fields
     if (!email || !password) {
         throw new ApiError(400, "All fields are required");
     }
 
+    // Check if the user exists in the database
     const userfind = await newUser.findOne({ email });
-
     if (!userfind) {
         throw new ApiError(404, "User does not exist");
     }
 
+    // Validate password using a method from the model
     const isPasswordValid = await userfind.isPasswordCorrect(password);
-
     if (!isPasswordValid) {
         throw new ApiError(400, "Invalid password");
     }
 
+    // Generate access and refresh tokens
     const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(userfind._id);
 
+    // Fetch user data without the refresh token field
     const loggedInUser = await newUser.findById(userfind._id).select("-refreshToken");
 
+    // Set secure HTTP-only cookies for the tokens
     const options = {
         httpOnly: true,
         secure: true
@@ -89,16 +111,19 @@ const login = asyncHandler(async (req, res) => {
         .json(new ApiResponse(200, { user: loggedInUser, accessToken, refreshToken }, "User logged in successfully"));
 });
 
-
-//logout user
-
+/**
+ * Logs out a user by clearing their refresh token and cookies.
+ */
 const logoutUser = asyncHandler(async (req, res) => {
+    // Remove the refresh token from the user document
+    console.log(req.body);
     await newUser.findByIdAndUpdate(req.user._id, {
         $set: {
             refreshToken: undefined
         }
     });
 
+    // Clear the access and refresh token cookies
     const options = {
         httpOnly: true,
         secure: true
@@ -108,103 +133,99 @@ const logoutUser = asyncHandler(async (req, res) => {
         .status(200)
         .clearCookie("accessToken", options)
         .clearCookie("refreshToken", options)
-        .json(new ApiResponse(200, {} , "User logged out"));
+        .json(new ApiResponse(200, {}, "User logged out"));
 });
 
-
-
-//refrese  token
-
-const refreshAccessToken = asyncHandler( async(req , res)=>{
-
+/**
+ * Refreshes the access token using the provided refresh token.
+ */
+const refreshAccessToken = asyncHandler(async (req, res) => {
     try {
-        const incomingRefreshToken = Refreq.cookies.refreshToken || req.body.refreshToken;
-    
-        if (incomingRefreshToken) {
-    
-            throw new ApiError(401 , "unauthorized requrest")
-            
+        // Retrieve the refresh token from cookies or request body
+        const incomingRefreshToken = req.cookies.refreshToken || req.body.refreshToken;
+
+        if (!incomingRefreshToken) {
+            throw new ApiError(401, "Unauthorized request");
         }
-    
+
+        // Verify the refresh token
         const decodedToken = jwt.verify(
             incomingRefreshToken,
             process.env.JWT_REFRESH_TOKEN_SECRET
-        )
-    
-        const user = await newUser.findById(decodedToken?._id)
-    
-        if ( !user ) {
-    
-            throw new ApiError(401 , "Invalid Token")
-            
+        );
+
+        // Fetch the user associated with the token
+        const user = await newUser.findById(decodedToken?._id);
+        if (!user) {
+            throw new ApiError(401, "Invalid token");
         }
-    
-        if (incomingRefreshToken !== user?.refreshToken ) {
-    
-            throw new ApiError(401, "Refresh token is expired or used")
-            
+
+        // Validate the refresh token
+        if (incomingRefreshToken !== user?.refreshToken) {
+            throw new ApiError(401, "Refresh token is expired or used");
         }
-    
-        const options ={
+
+        // Generate new tokens
+        const { accessToken, newrefreshToken } = await generateAccessAndRefreshTokens(user._id);
+
+        // Set the new tokens in cookies
+        const options = {
             httpOnly: true,
             secure: true
-        }
-    
-        const {accessToken , newrefreshToken} = await generateAccessAndRefreshTokens(user._id)
-    
+        };
+
         return res
-        .status(200)
-        .cookie("accessToken",  accessToken)
-        .cookie("refreshToken",  refreshToken)
-        .json(new ApiResponse(200, {accessToken , refresh: newrefreshToken} , "Refresh token generated"));
-    
+            .status(200)
+            .cookie("accessToken", accessToken, options)
+            .cookie("refreshToken", newrefreshToken, options)
+            .json(new ApiResponse(200, { accessToken, refresh: newrefreshToken }, "Refresh token generated"));
     } catch (error) {
-
-        throw new ApiError(401, "Invalid refresh token")
-        
+        throw new ApiError(401, "Invalid refresh token");
     }
-} )
+});
 
-
-
-//Update user
-
+/**
+ * Updates user account details, including name, email, password, and avatar.
+ */
 const updateAccount = asyncHandler(async (req, res) => {
     const { name, email, password } = req.body;
 
+    // Validate required fields
     if (!name || !email || !password) {
         throw new ApiError(400, "All fields are required");
     }
 
+    // Upload avatar to Cloudinary if provided
     let avatarName;
     if (req.file) {
-        const avatarLocalPath = req.file.path; // Path to the uploaded file
+        const avatarLocalPath = req.file.path;
         avatarName = await uploadOnCloudinary(avatarLocalPath);
     }
 
+    // Prepare the data to update
     const updateData = {
         name,
         email,
-        password,
+        password
     };
 
     if (avatarName) {
-        updateData.avatar = avatarName.url; // Save the avatar path to the database if it exists
+        updateData.avatar = avatarName.url; // Set the new avatar URL if uploaded
     }
 
+    // Update the user document in the database
     const user = await newUser.findByIdAndUpdate(
         req.params.id,
         { $set: updateData },
-        { new: true }
+        { new: true } // Return the updated document
     );
-
 
     return res.status(200).json(new ApiResponse(200, user, "Account details updated successfully"));
 });
 
-
-//Delete user
-
+/**
+ * Deletes a user account by ID.
+ */
 const deleteAccount = asyncHandler(async (req, res) => {
     const user = await newUser.findByIdAndDelete(req.params.id);
 
@@ -218,12 +239,13 @@ const deleteAccount = asyncHandler(async (req, res) => {
     });
 });
 
-//User Data By Id
-
+/**
+ * Fetches user data by their ID.
+ */
 const getUserById = asyncHandler(async (req, res) => {
-
     const userId = req.params.id;
 
+    // Find the user by ID
     const user = await newUser.findById(userId);
 
     if (!user) {
@@ -231,14 +253,12 @@ const getUserById = asyncHandler(async (req, res) => {
     }
 
     res.status(200).json(new ApiResponse(200, user, "User data retrieved successfully"));
+});
 
-})
-
-
-
-//Watch History
-const GetWatchHistory = asyncHandler(async (req , res) =>{
-
+/**
+ * Retrieves the watch history of a user with video and owner details.
+ */
+const GetWatchHistory = asyncHandler(async (req, res) => {
     const user = await newUser.aggregate([
         {
             $match: {
@@ -247,20 +267,20 @@ const GetWatchHistory = asyncHandler(async (req , res) =>{
         },
         {
             $lookup: {
-                from: "videos",
+                from: "videos", // Join with the "videos" collection
                 localField: "watchHistory",
                 foreignField: "_id",
                 as: "watchHistory",
                 pipeline: [
                     {
                         $lookup: {
-                            from: "newusers",
+                            from: "newusers", // Join with the "newusers" collection
                             localField: "owner",
                             foreignField: "_id",
                             as: "owner",
                             pipeline: [
                                 {
-                                    $project: {
+                                    $project: { // Fetch only the necessary fields
                                         name: 1,
                                         avatar: 1
                                     }
@@ -269,51 +289,51 @@ const GetWatchHistory = asyncHandler(async (req , res) =>{
                         }
                     },
                     {
-                        $addFields:{
-                            owner:{
-                                $first: "$owner"
-                            }
+                        $addFields: {
+                            owner: { $first: "$owner" } // Include the owner details
                         }
                     }
                 ]
             }
         }
-    ])
+    ]);
 
     return res
-    .status(200)
-    .json(
-        new ApiResponse(
-            200,
-            user[0].watchHistory,
-            "Watch history fetched successfully"
-        )
-    )
+        .status(200)
+        .json(
+            new ApiResponse(
+                200,
+                user[0].watchHistory,
+                "Watch history fetched successfully"
+            )
+        );
+});
 
-})
-
-
-//Add Watch History
-
+/**
+ * Adds a video to the user's watch history.
+ */
 const addToWatchHistory = asyncHandler(async (req, res) => {
     const userId = req.user._id;
     const { id } = req.params;
 
+    // Validate the video ID
     if (!mongoose.Types.ObjectId.isValid(id)) {
         throw new ApiError(400, "Invalid video ID");
     }
 
+    // Find the video by ID
     const video = await Video.findById(id);
     if (!video) {
         throw new ApiError(404, "Video not found");
     }
 
+    // Find the user by ID
     const user = await newUser.findById(userId);
     if (!user) {
         throw new ApiError(404, "User not found");
     }
 
-    // Add the video to the watch history
+    // Add the video to the watch history if not already present
     if (!user.watchHistory.includes(id)) {
         user.watchHistory.push(id);
         await user.save();
@@ -322,6 +342,7 @@ const addToWatchHistory = asyncHandler(async (req, res) => {
     return res.status(200).json(new ApiResponse(200, user.watchHistory, "Video added to watch history successfully"));
 });
 
+// Export all the controller functions
 export {
     registerUser,
     login,

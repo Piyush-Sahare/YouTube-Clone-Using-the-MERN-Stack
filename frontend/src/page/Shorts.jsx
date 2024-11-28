@@ -1,5 +1,6 @@
+//frontend/src/page/Shorts.jsx
 import React from 'react';
-
+import { FiAlertTriangle } from "react-icons/fi";
 function Shorts() {
   return (
     <div className="lg:mt-8 bg-white grid grid-cols-1 px-8 pt-6 xl:grid-cols-3 xl:gap-4">
@@ -8,22 +9,7 @@ function Shorts() {
         <div className="bg-yellow-50 border border-yellow-200 text-sm text-yellow-800 rounded-lg p-4" role="alert">
       <div className="flex">
         <div className="flex-shrink-0">
-          <svg
-            className="flex-shrink-0 size-4 mt-0.5"
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M21.73 18l-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
-            <path d="M12 9v4"></path>
-            <path d="M12 17h.01"></path>
-          </svg>
+        <FiAlertTriangle className="flex-shrink-0 size-4 mt-0.5" />
         </div>
         <div className="ms-4">
           <h3 className="text-sm font-semibold">

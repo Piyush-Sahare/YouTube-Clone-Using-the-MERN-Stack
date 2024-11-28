@@ -1,3 +1,4 @@
+//frontend/src/components/index.js
 import Home from "../page/Home";
 import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
@@ -5,7 +6,7 @@ import YourChannel from "../page/Channel";
 import History from "../page/History";
 import Playlist from "./Playlist";
 import Create from "./Create";
-import CustomizeChannel from "./CustomizeChannel";
+import CustomizeAccount from "./CustomizeAccount";
 import Login from "../page/Login";
 import Signup from "../page/Signup";
 import Settings from "../page/Settings";
@@ -14,6 +15,7 @@ import Video from "../page/Video";
 import UploadVideo from "./UploadVideo";
 import AllVideo from "./AllVideo";
 import AuthLayout from "../layouts/AuthLayout";
+import EditChannel from "./EditChannel";
 
 export {
     Home,
@@ -23,7 +25,7 @@ export {
     History,
     Playlist,
     Create,
-    CustomizeChannel,
+    CustomizeAccount,
     Login,
     Signup,
     Settings,
@@ -32,4 +34,5 @@ export {
     UploadVideo,
     AllVideo,
     AuthLayout,
+    EditChannel
 };

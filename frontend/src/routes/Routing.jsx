@@ -1,25 +1,25 @@
-// Routing.js
+//frontend/src/routes/Routing.js
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import store from '../Redux/store.js';
 import App from '../App';
-import { Home, YourChannel, History, Playlist, CustomizeChannel, Signup, Login, Settings, Shorts, Video, UploadVideo, AllVideo, AuthLayout ,} from '../components';
+import { Home, YourChannel, History, Playlist, CustomizeAccount,EditChannel, Signup, Login, Settings, Shorts, Video, UploadVideo, AllVideo, AuthLayout, } from '../components';
 
 function Routing() {
     return (
         <Provider store={store}>
             <BrowserRouter>
                 <Routes>
-                 <Route path='/' element={<App/>}>
+                    <Route path='/' element={<App />}>
                         <Route index element={<Home />} />
-                         
+
                         <Route path='your_channel/*' element={
                             <AuthLayout>
                                 <YourChannel />
                             </AuthLayout>
                         }>
-                            <Route  index element={
+                            <Route index element={
                                 <AuthLayout>
                                     <AllVideo />
                                 </AuthLayout>
@@ -41,7 +41,7 @@ function Routing() {
                                 <  Playlist />
                             </AuthLayout>
                         } />
-                        
+
                         <Route path='subscriptions' element={
                             <AuthLayout>
                                 <Home />
@@ -53,11 +53,17 @@ function Routing() {
                             </AuthLayout>
                         } />
                         <Route path='watch/:id' element={
-                                <Video />
+                            <Video />
                         } />
-                        <Route path='customize_channel' element={
+                        <Route path='CustomizeAccount' element={
                             <AuthLayout>
-                                < CustomizeChannel />
+                                < CustomizeAccount />
+                            </AuthLayout>
+                        } />
+
+                        <Route path='edit_channel' element={
+                            <AuthLayout>
+                                < EditChannel />
                             </AuthLayout>
                         } />
                         <Route path='settings' element={

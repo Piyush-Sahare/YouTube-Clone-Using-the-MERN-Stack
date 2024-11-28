@@ -1,3 +1,4 @@
+//backend/controllers/videoController.js
 import { Video } from "../models/videoModel.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
@@ -6,7 +7,6 @@ import { uploadOnCloudinary } from "../utils/cloudinary.js";
 
 
 //video upload
-
 const publishAVideo = asyncHandler(async (req, res) => {
   const { title, description } = req.body;
   const thumbnailFile = req.files?.thumbnail?.[0];
@@ -29,6 +29,7 @@ const publishAVideo = asyncHandler(async (req, res) => {
     thumbnail: thumbnailFilePath.url,
     videoFile: videoFilePath.url,
     owner: req.user._id,
+    channelId: req.user.channelID,
     views: 0 // Initialize views to 0
   });
 

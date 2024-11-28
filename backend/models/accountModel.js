@@ -1,42 +1,52 @@
-import mongoose, {Schema} from "mongoose";
+//backend/models/accountModel.js
+import mongoose, { Schema } from "mongoose";
 import jwt from "jsonwebtoken";
 
 
 const userSignUp = new Schema(
     {
-        name:{
-            type:String,
-            requiered:true,
+        name: {
+            type: String,
+            requiered: true,
             unique: true,
             trim: true,
             index: true
         },
-        email:{
-            type:String,
-            requiered:true,
+        email: {
+            type: String,
+            requiered: true,
             unique: true,
             lowercase: true,
-            trim: true 
+            trim: true
         },
-        password:{
-            type:String,
-            requiered:true
+        password: {
+            type: String,
+            requiered: true
         },
-        avatar:{
-            type:String
+        avatar: {
+            type: String
         },
-        watchHistory:[
+        hasChannel: {
+            type: Boolean,
+            default: false,
+        },
+        channelID:
+        {
+            type: Schema.Types.ObjectId,
+            ref: "channel"
+        },
+        watchHistory: [
             {
-                type : Schema.Types.ObjectId,
+                type: Schema.Types.ObjectId,
                 ref: "video"
             }
         ],
-        refreshToken:{
+        refreshToken: {
             type: String
         }
     },
     {
-        timestamps:true
+        timestamps: true
     }
 )
 
@@ -47,7 +57,7 @@ userSignUp.methods.isPasswordCorrect = async function (password) {
     return this.password === password;
 };
 
-userSignUp.methods.generateAccessToken = function(){
+userSignUp.methods.generateAccessToken = function () {
     return jwt.sign(
         {
             _id: this._id,
@@ -60,11 +70,11 @@ userSignUp.methods.generateAccessToken = function(){
         }
     )
 }
-userSignUp.methods.generateRefreshToken = function(){
+userSignUp.methods.generateRefreshToken = function () {
     return jwt.sign(
         {
             _id: this._id,
-            
+
         },
         process.env.REFRESH_TOKEN_SECRET,
         {
@@ -74,4 +84,4 @@ userSignUp.methods.generateRefreshToken = function(){
 }
 
 
-export const newUser = mongoose.model("newUser" , userSignUp)
+export const newUser = mongoose.model("newUser", userSignUp)
