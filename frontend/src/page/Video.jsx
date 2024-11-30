@@ -2,27 +2,28 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link, useParams } from 'react-router-dom';
-import { FaUserCircle} from "react-icons/fa";
-
+import { FaUserCircle } from "react-icons/fa";
+import { useSelector, useDispatch } from 'react-redux';
+import { addToWatchHistory,} from '../Redux/slice/authSlice';
+import { fetchVideoById,incrementView} from '../Redux/slice/videoSlice';
 
 function Video() {
   const { id } = useParams();
-  const [videoData, setVideoData] = useState(id);
   const [loading, setLoading] = useState(true);
   const [userData, setUserData] = useState(null);
   const [error, setError] = useState(null);
-
+  const videoData = useSelector((state) => state.video.video);
+  const dispatch = useDispatch();
   const formatDate = (dateString) => {
     const options = { year: 'numeric', month: 'long' };
     const date = new Date(dateString);
     return date.toLocaleDateString(undefined, options);
   };
-
+console.log("videodata",videoData);
   useEffect(() => {
     const fetchVideoData = async () => {
       try {
-        const response = await axios.get(`/api/v1/videos/videoData/${id}`);
-        setVideoData(response.data.data);
+        dispatch(fetchVideoById(id));
       } catch (error) {
         setError(error.message);
       } finally {
@@ -34,27 +35,27 @@ function Video() {
   }, [id]);
 
   useEffect(() => {
-    const incrementViewCount = async () => {
+    const IncrementViewCount = async () => {
       try {
-        await axios.put(`/api/v1/videos/incrementView/${id}`);
+        await dispatch(incrementView(id)).unwrap();
         console.log('View count incremented');
       } catch (error) {
         console.error('Error incrementing view count:', error);
       }
     };
-    incrementViewCount();
+    IncrementViewCount();
   }, [id]);
 
   useEffect(() => {
-    const addToWatchHistory = async () => {
+    const AddToWatchHistory = async () => {
       try {
-        await axios.put(`/api/v1/account/addToHistory/${id}`);
+        dispatch(addToWatchHistory(id));
         console.log('addToWatchHistory');
       } catch (error) {
         console.error('Error addToWatchHistory:', error);
       }
     };
-    addToWatchHistory();
+    AddToWatchHistory();
   }, [id]);
 
   useEffect(() => {
@@ -63,6 +64,7 @@ function Video() {
         try {
           const response = await axios.get(`/api/v1/account/userData/${videoData.owner}`);
           setUserData(response.data.data);
+
         } catch (error) {
           console.error('Error fetching user data:', error);
         }
@@ -91,18 +93,18 @@ function Video() {
           <div className="container mx-auto">
             <div className="row">
               <div className="col-lg-9 col-xl-9">
-              <section>
-                <div className="row">
-                  <div className="col">
-                    <div className="relative video-wrap" style={{ height: "465px" }}>
-                      <video className=" w-full h-full" controls>
-                        <source src={videoData.videoFile} type="video/mp4"/>
-                        Your browser does not support the video tag.
-                      </video>
+                <section>
+                  <div className="row">
+                    <div className="col">
+                      <div className="relative video-wrap" style={{ height: "465px" }}>
+                        <video className=" w-full h-full" controls>
+                          <source src={videoData.videoFile} type="video/mp4" />
+                          Your browser does not support the video tag.
+                        </video>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </section>
+                </section>
 
                 <div className="mt-4">
                   <h1 className="mb-3 text-xl truncate">{videoData.title}</h1>
@@ -126,21 +128,21 @@ function Video() {
                         </li>
                         <li>
                           <Link className="inline-flex cursor-pointer items-center gap-2 px-1 py-3 text-gray-600 hover:text-black" >
-                          <FaUserCircle className="h-5 w-5" />
+                            <FaUserCircle className="h-5 w-5" />
                             Subscribe
                             <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs font-semibold text-gray-600"> 303k </span>
                           </Link>
                         </li>
-                        
+
                         <li>
                           <Link className="inline-flex cursor-pointer items-center gap-2 px-1 py-3 text-gray-600 hover:text-black">
-                            <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs font-semibold text-gray-600"> {videoData.views} views </span> 
+                            <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs font-semibold text-gray-600"> {videoData.views} views </span>
                           </Link>
                         </li>
                         <li>
                           <Link className="inline-flex cursor-pointer items-center gap-2 px-1 py-3 text-gray-600 hover:text-black">
-                        
-                            <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs font-semibold text-gray-600">{formatDate(videoData.createdAt)}</span> 
+
+                            <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs font-semibold text-gray-600">{formatDate(videoData.createdAt)}</span>
                           </Link>
                         </li>
                       </ul>

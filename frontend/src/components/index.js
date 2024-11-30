@@ -5,7 +5,6 @@ import Sidebar from "./Sidebar";
 import YourChannel from "../page/Channel";
 import History from "../page/History";
 import Playlist from "./Playlist";
-import Create from "./Create";
 import CustomizeAccount from "./CustomizeAccount";
 import Login from "../page/Login";
 import Signup from "../page/Signup";
@@ -24,7 +23,6 @@ export {
     YourChannel,
     History,
     Playlist,
-    Create,
     CustomizeAccount,
     Login,
     Signup,

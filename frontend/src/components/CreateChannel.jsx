@@ -1,20 +1,20 @@
-//frontend/src/components/CreateChannel.jsx
-import React, { useState } from 'react';
-import axios from 'axios';
+// //frontend/src/components/CreateChannel.jsx
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from "react-redux";
-import { updateHasChannel } from '../Redux/slice/authSlice';
+import { createChannel, clearError, clearSuccessMessage } from "../Redux/slice/channelSlice";
+import { getUserData } from "../Redux/slice/authSlice";
 
 const CreateChannel = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
   const [name, setName] = useState('');
   const [handle, setHandle] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [success, setSuccess] = useState(null);
-  const token = useSelector((state) => state.auth.accessToken);
-  const hasChannel = useSelector((state) => state.auth.hasChannel);
+
   const dispatch = useDispatch();
+  const { error, successMessage } = useSelector((state) => state.channel);
+  const [loading, setLoading] = useState(false);
+  const userId = useSelector((state) => state.auth.user._id);
+
 
   // Handle input changes
   const handleInputChange = (e) => {
@@ -23,43 +23,24 @@ const CreateChannel = ({ isOpen, onClose }) => {
     if (name === 'handle') setHandle(value);
   };
 
-  const handleSubmit = async (e) => {
+  // Handle form submission
+  const handleSubmit = (e) => {
     e.preventDefault();
-
+    setLoading(true);
     if (!name || !handle) {
-      setError('Name and Handle are required');
+      dispatch(clearError());
       return;
     }
 
-    setLoading(true);
-    setError(null);
-    setSuccess(null);
-
-
-    console.log({ handle, name });
-    const data = { handle, name };
-
-    try {
-      const response = await axios.post('/api/v1/channel/create', data, {
-        headers: {
-          'Content-Type': 'application/json', // Important for sending files
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      // Check response status
-      if (response.status === 200) {
-        setSuccess('Channel created successfully!');
-        dispatch(updateHasChannel(true));
-        onClose();  // Close modal after success
-      } else {
-        setError('Failed to create channel.');
+    dispatch(createChannel({ name, handle })).then((result) => {
+      if (result.meta.requestStatus === "fulfilled") {
+        dispatch(getUserData(userId)); // Update user state
+        onClose(); // Close modal
+        setLoading(false);
+        dispatch(clearError());
+        dispatch(clearSuccessMessage());
       }
-    } catch (err) {
-      setError('Error: ' + err.message);
-    } finally {
-      setLoading(false);
-    }
+    });
   };
 
   return (
@@ -67,7 +48,6 @@ const CreateChannel = ({ isOpen, onClose }) => {
       <div className="bg-white rounded-lg shadow-lg w-full max-w-md p-6">
         <h2 className="text-xl font-semibold text-gray-800">How you’ll appear</h2>
         <div className="mt-4">
-          
           {/* Form */}
           <form className="mt-6" onSubmit={handleSubmit}>
             <div className="mb-4">
@@ -97,7 +77,7 @@ const CreateChannel = ({ isOpen, onClose }) => {
 
             {/* Display errors or success */}
             {error && <div className="text-red-500 text-sm">{error}</div>}
-            {success && <div className="text-green-500 text-sm">{success}</div>}
+            {successMessage && <div className="text-green-500 text-sm">{successMessage}</div>}
 
             {/* Footer */}
             <div className="flex items-center justify-end space-x-4 mt-6">
@@ -123,4 +103,4 @@ const CreateChannel = ({ isOpen, onClose }) => {
   );
 };
 
-export default CreateChannel; 
+export default CreateChannel;

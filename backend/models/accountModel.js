@@ -8,7 +8,6 @@ const userSignUp = new Schema(
         name: {
             type: String,
             requiered: true,
-            unique: true,
             trim: true,
             index: true
         },
@@ -30,7 +29,7 @@ const userSignUp = new Schema(
             type: Boolean,
             default: false,
         },
-        channelID:
+        channelId:
         {
             type: Schema.Types.ObjectId,
             ref: "channel"
@@ -41,9 +40,6 @@ const userSignUp = new Schema(
                 ref: "video"
             }
         ],
-        refreshToken: {
-            type: String
-        }
     },
     {
         timestamps: true
@@ -70,18 +66,5 @@ userSignUp.methods.generateAccessToken = function () {
         }
     )
 }
-userSignUp.methods.generateRefreshToken = function () {
-    return jwt.sign(
-        {
-            _id: this._id,
-
-        },
-        process.env.REFRESH_TOKEN_SECRET,
-        {
-            expiresIn: process.env.REFRESH_TOKEN_EXPIRY
-        }
-    )
-}
-
 
 export const newUser = mongoose.model("newUser", userSignUp)

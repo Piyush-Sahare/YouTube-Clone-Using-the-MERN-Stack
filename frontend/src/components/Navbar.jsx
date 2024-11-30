@@ -1,23 +1,21 @@
-// // //frontend/src/components/Navbar.jsx
+//frontend/src/components/Navbar.jsx
 import { useState, useEffect } from 'react';
 import React from 'react';
 import logo from '../assets/YouTube_Logo_2017.svg.png';
 import { Link } from 'react-router-dom';
 import { logout } from '../Redux/slice/authSlice';
 import { useDispatch, useSelector } from "react-redux";
-import axios from 'axios';
+import { getUserData } from '../Redux/slice/authSlice'; // Import getUserData action
 import { FiSearch, FiMenu } from "react-icons/fi";
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
 import CreateChannel from './CreateChannel'; 
 
 function Navbar({ openChange }) {
-  const [userdata, setUserData] = useState(null);
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false); // Modal visibility state
   const dispatch = useDispatch();
-  const hasChannel = useSelector((state) => state.auth.hasChannel);
   const authStatus = useSelector((state) => state.auth.status);
-  const data = useSelector((state) => state.auth.user);
+  const userdata = useSelector((state) => state.auth.user); // Access user data from Redux store
 
   const toggleSidebar = () => {
     console.log("Sidebar toggle triggered");
@@ -41,23 +39,11 @@ function Navbar({ openChange }) {
     console.log("Sign out clicked");
   };
 
- 
-
   useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const response = await axios.get(`/api/v1/account/userData/${data._id}`);
-        const userData = response.data.data;
-        setUserData(userData);
-      } catch (error) {
-        console.error('Error fetching user data:', error);
-      }
-    };
-
-    if (data?._id) {
-      fetchUser();
+    if (userdata?._id) {
+      dispatch(getUserData(userdata._id)); 
     }
-  }, [data,closeModal]);
+  }, [userdata, dispatch]); // The effect will re-run when userdata changes
 
   return (
     <>

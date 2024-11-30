@@ -29,7 +29,7 @@ const publishAVideo = asyncHandler(async (req, res) => {
     thumbnail: thumbnailFilePath.url,
     videoFile: videoFilePath.url,
     owner: req.user._id,
-    channelId: req.user.channelID,
+    channelId: req.user.channelId,
     views: 0 // Initialize views to 0
   });
 

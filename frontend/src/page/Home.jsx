@@ -2,16 +2,17 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-
+import {useSelector,useDispatch } from 'react-redux';
+import { fetchAllVideos } from '../Redux/slice/videoSlice';
 function Home() {
-  const [videos, setVideos] = useState([]);
   const [loader, setLoader] = useState(false)
-
+  const dispatch = useDispatch();
+  const { videos} = useSelector((state) => state.video);
+  //console.log("videos",videos);
   useEffect(() => {
     const fetchVideos = async () => {
       try {
-        const response = await axios.get('/api/v1/videos/allVideo');
-        setVideos(response.data.data);
+        dispatch(fetchAllVideos());
       } catch (error) {
         console.error('Error fetching videos:', error);
       }

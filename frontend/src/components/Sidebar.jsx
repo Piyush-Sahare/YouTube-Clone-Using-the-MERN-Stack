@@ -15,6 +15,8 @@ import { MdSubscriptions, MdExplore, MdTrendingUp, MdHistory } from 'react-icons
 
 function Sidebar({ hidden }) {
     const authStatus = useSelector((state) => state.auth.status);
+    const user = useSelector((state) => state.auth.user); // Get the user object
+    const hasChannel = user ? user.hasChannel : false; // Check if user exists before accessing hasChannel
 
     const navItems = [
         { name: "Home", path: "/", icon: <FiHome />, active: true },
@@ -66,6 +68,7 @@ function Sidebar({ hidden }) {
                                                     </Link>
                                                 </li>
                                                 <li>
+                                                {hasChannel &&( 
                                                     <Link
                                                         to="/your_channel"
                                                         className="flex items-center p-2 text-base text-gray-900 rounded-lg hover:bg-gray-100 group"
@@ -74,7 +77,7 @@ function Sidebar({ hidden }) {
                                                         <span className="ml-3" sidebar-toggle-item>
                                                             Your Channel
                                                         </span>
-                                                    </Link>
+                                                    </Link>)}
                                                 </li>
                                             </div>
                                             <li>

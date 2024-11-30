@@ -2,43 +2,50 @@
 import { useState, useEffect } from "react";
 import React from 'react';
 import { Link, Outlet, useNavigate } from "react-router-dom";
-import { useSelector } from 'react-redux';
+import { useSelector , useDispatch} from 'react-redux';
 import axios from "axios";
 import { MdGridView, MdEqualizer } from "react-icons/md";
+import { getUserData } from '../Redux/slice/authSlice';
+import { deleteChannel} from '../Redux/slice/channelSlice';
 
+import { useToast } from "../hooks/use-toast"
 function Channel() {
   const data = useSelector((state) => state.auth.user);
+  
+  //console.log(data);
   const [userdata, setUserData] = useState();
   const navigate = useNavigate(); 
+  const dispatch = useDispatch();
+  const { toast } = useToast()
+  useEffect(() => {
+    if (data._id) {
+      dispatch(getUserData(data._id)); // Dispatch the action to get user data
+    }
+  }, [data._id, dispatch]);
 
+  useEffect(() => {
+    if (data) {
+      setUserData(data); // Once user data is in the Redux store, update the local state
+    }
+  }, [data]);
+//console.log(data);
   const handleDeleteChannel = async () => {
     const confirmDelete = window.confirm("Are you sure you want to delete your channel? This action cannot be undone.");
     if (!confirmDelete) return;
 
     try {
-      await axios.delete(`/api/v1/channel/delete/${data.channelID}`, {
+      dispatch(deleteChannel(data.channelId));
+      toast({
+        title: "Channel Deleted Successfully",
+        description: "You will be redirected to the home page.",
       });
-      alert("Channel deleted successfully");
       navigate("/"); // Redirect user to the home page after deletion
-      
+      dispatch(getUserData(data._id));
     } catch (error) {
       console.error("Error deleting channel:", error);
-      alert("Please Login again to Delete Channel.");
+      alert("Error deleting channel");
     }
   };
-  useEffect(() => {
-    if (data._id) {
-      const fetchUser = async () => {
-        try {
-          const response = await axios.get(`/api/v1/account/userData/${data._id}`);
-          setUserData(response.data.data);
-        } catch (error) {
-          console.error('Error fetching user data:', error);
-        }
-      };
-      fetchUser();
-    }
-  }, [data._id]);
 
   const formatDate = (dateString) => {
     const options = { year: 'numeric', month: 'long' };

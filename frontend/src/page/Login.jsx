@@ -47,7 +47,7 @@ function Login() {
     <div className="p-4 text-center">
     <div role="status">
        
-        <span className="">Loading...</span>
+        <span className="">loading...</span>
     </div>
     </div>
     </div>

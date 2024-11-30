@@ -2,38 +2,30 @@
 import React from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import img from "../assets/gde-najti-ssylku-na-svoj-kanal-youtube.jpg"
-import axios from 'axios'
 import { useState } from 'react'
-import { useSelector } from 'react-redux';
+import { useSelector ,useDispatch} from 'react-redux';
+import { deleteAccount } from '../Redux/slice/authSlice';
 
 function Settings() {
 
     const [loader, setLoader] = useState(false)
     const userdata = useSelector((state) => state.auth.user);
-
-    const history = useNavigate()
+    const dispatch = useDispatch();
+    const navigate = useNavigate()
 
     const handleDeleteClick = async () =>{
-         
         const  value = confirm("Are you sure ?");
-
-        if (value) {
-
-            
+        if (value) { 
             try {
                 setLoader(true)
-                const res = await axios.delete(`/api/v1/account/delete/${userdata._id}`)
+                dispatch(deleteAccount(userdata._id));
                 setLoader(false)
-                alert("Your channel is deleted !");
-                history("/signup");
-                
+                alert("Your account is deleted !");
+                navigate("/signup");
             } catch (error) {
-
-                console.log("Channel delete error :",error);
+                console.log("account delete error :",error);
                 alert(error);
-                
             }
-            
         }  
     }
   return (

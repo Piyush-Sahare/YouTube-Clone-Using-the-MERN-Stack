@@ -29,7 +29,7 @@ export const createChannel = async (req, res) => {
 
     // Update user with channel details
     user.hasChannel = true;
-    user.channelID = savedChannel._id;
+    user.channelId = savedChannel._id;
     await user.save();
 
     res.status(200).json({ message: "Channel created successfully", channel: savedChannel });
@@ -45,7 +45,7 @@ export const getChannel = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const channel = await Channel.findById(id).populate("owner", "-password -refreshToken");
+    const channel = await Channel.findById(id).populate("owner", "-password ");
     if (!channel) {
       return res.status(404).json({ error: "Channel not found" });
     }
@@ -60,12 +60,7 @@ export const getChannel = async (req, res) => {
 export const updateChannel = asyncHandler(async (req, res) => {
   const { name, handle, description } = req.body;
 
-  // Validate required fields
-  if (!name || !handle || !description) {
-      throw new ApiError(400, "All fields are required");
-  }
-
-  // Upload avatar to Cloudinary if provided
+  // Upload banner to Cloudinary if provided
   let bannerName;
   if (req.file) {
       const bannerLocalPath = req.file.path;
@@ -73,12 +68,10 @@ export const updateChannel = asyncHandler(async (req, res) => {
   }
 
   // Prepare the data to update
-  const updateData = {
-      name,
-       handle,
-      description
-  };
-
+  const updateData = {};
+  if (name) updateData.name = name;
+  if (handle) updateData.handle = handle;
+  if (description) updateData.description = description;
   if (bannerName) {
       updateData.banner = bannerName.url; // Set the new avatar URL if uploaded
   }
@@ -92,6 +85,7 @@ export const updateChannel = asyncHandler(async (req, res) => {
 
   return res.status(200).json(new ApiResponse(200, user, "Account details updated successfully"));
 });
+
 
 
 // delete channel
@@ -113,11 +107,11 @@ export const deleteChannel = async (req, res) => {
     // Delete the channel
     await channel.deleteOne();
 
-    // Update the user's `hasChannel` and `channelID`
+    // Update the user's hasChannel and channelID
     const user = await newUser.findById(req.user._id);
     if (user) {
       user.hasChannel = false;
-      user.channelID = null;
+      user.channelId = null;
       await user.save();
     }
 
@@ -126,4 +120,4 @@ export const deleteChannel = async (req, res) => {
     console.error("Error deleting channel:", err.message);
     res.status(500).json({ error: "Server error while deleting channel" });
   }
-};
+}; 
