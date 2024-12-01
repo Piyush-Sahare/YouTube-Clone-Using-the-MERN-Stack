@@ -1,10 +1,10 @@
 // //frontend/src/components/Allvideo.jsx
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchAllUserVideos, deleteVideo } from '../Redux/slice/videoSlice';
+import { fetchAllUserVideos, deleteVideo,resetUserVideos } from '../Redux/slice/videoSlice';
 import { Link } from 'react-router-dom';
 import { TrashIcon } from '@heroicons/react/24/solid';
-
+import { useToast } from "../hooks/use-toast"
 function AllVideo() {
   const dispatch = useDispatch();
   const userdata = useSelector((state) => state.auth.user);
@@ -12,6 +12,7 @@ function AllVideo() {
   // console.log('userData:', userdata);
   // console.log('Videos from Selector:', videos);
   const loading = useSelector((state) => state.videos?.loading || false);
+  const { toast } = useToast()
 
   useEffect(() => {
     if (userdata?._id) {
@@ -20,13 +21,21 @@ function AllVideo() {
         .unwrap()
         .catch((error) => console.error('Error fetching user videos:', error));
     }
+
+    return () => {
+        dispatch(resetUserVideos());
+      };
   }, [userdata?._id, dispatch]);
   //console.log("videos:",videos);
   const handleDelete = (videoId) => {
     if (confirm('Are you sure you want to delete this video?')) {
       dispatch(deleteVideo(videoId))
         .unwrap()
-        .then(() => alert('Video deleted successfully!'))
+        .then(() => {
+            toast({
+                title: "Video Deleted Successfully",
+              });
+        })
         .catch((error) => console.error('Error deleting video:', error));
     }
   };

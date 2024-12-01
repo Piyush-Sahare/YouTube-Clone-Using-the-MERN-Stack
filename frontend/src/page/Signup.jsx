@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { register } from '../Redux/slice/authSlice';
-
+import { useToast } from "../hooks/use-toast"
 function Signup() {
 
     const [loader, setLoader] = useState(false)
@@ -18,7 +18,7 @@ function Signup() {
 
     const [error, setError] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
-
+    const { toast } = useToast()
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
@@ -32,11 +32,18 @@ function Signup() {
             setFormData({ name: '', email: '', password: '' });
             setError('');
             setLoader(false);
-            alert(" SignUp Successfully .")
+            //alert("SignUp Successfully .")
+            toast({
+                title: "SignUp Successfully",
+              });
             navigate("/login");
         } catch (err) {
             setError(err.message || 'An error occurred.');
             setSuccessMessage('');
+            toast({
+                variant: "destructive",
+                title: 'An error occurred.',
+              });
         }
     };
 

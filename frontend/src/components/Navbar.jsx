@@ -9,14 +9,14 @@ import { getUserData } from '../Redux/slice/authSlice'; // Import getUserData ac
 import { FiSearch, FiMenu } from "react-icons/fi";
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
 import CreateChannel from './CreateChannel'; 
-
+import { useToast } from "../hooks/use-toast"
 function Navbar({ openChange }) {
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false); // Modal visibility state
   const dispatch = useDispatch();
   const authStatus = useSelector((state) => state.auth.status);
   const userdata = useSelector((state) => state.auth.user); // Access user data from Redux store
-
+  const { toast } = useToast()
   const toggleSidebar = () => {
     console.log("Sidebar toggle triggered");
     openChange();
@@ -37,6 +37,10 @@ function Navbar({ openChange }) {
   const handleSignOut = () => {
     dispatch(logout());
     console.log("Sign out clicked");
+    toast({
+      title: "You have successfully logged out",
+    });
+
   };
 
   useEffect(() => {

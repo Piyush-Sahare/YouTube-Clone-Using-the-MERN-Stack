@@ -3,12 +3,13 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { getUserData, updateAccount, } from '../Redux/slice/authSlice'; // Import the actions
+import { useToast } from "../hooks/use-toast"
 
 function CustomizeAccount() {
   const dispatch = useDispatch();
   const data = useSelector((state) => state.auth.user);
   const navigate = useNavigate();
-
+  const { toast } = useToast()
   const [userdata, setUserData] = useState(null);
   const [loader, setLoader] = useState(false);
 
@@ -24,7 +25,7 @@ function CustomizeAccount() {
   }, [data._id, dispatch]);
 
   useEffect(() => {
-    if (data) {
+    if (data && !userdata) {
       setUserData(data);
       setName(data.name);
       setEmail(data.email);
@@ -50,14 +51,21 @@ function CustomizeAccount() {
 
     try {
       setLoader(true);
-      await dispatch(updateAccount({ userId: userdata._id, formData })); // Dispatch the updateAccount action
+      dispatch(updateAccount({ userId: userdata._id, formData })); // Dispatch the updateAccount action
       setLoader(false);
-      alert('Account Updated Successfully');
+      //alert('Account Updated Successfully');
+      toast({
+        title: "Account Updated Successfully",
+      });
       navigate('/your_channel');
     } catch (error) {
       setLoader(false);
       console.log('Update Account error', error);
-      alert('Something went wrong!');
+      //alert('Something went wrong!');
+      toast({
+        variant: "destructive",
+        title: "Account Updated Successfully",
+      });
     }
   };
 

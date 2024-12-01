@@ -1,11 +1,11 @@
 //frontend/src/components/Uploadvideo.jsx
-import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom'
 import React, { useState } from 'react';
 import { FiX } from 'react-icons/fi';
 import { HiPlus } from 'react-icons/hi';
 import { useDispatch } from 'react-redux';
 import { publishVideo } from '../Redux/slice/videoSlice';
+import { useToast } from "../hooks/use-toast"
 
 function UploadVideo() {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -20,7 +20,7 @@ function UploadVideo() {
     };
 
     const navigate = useNavigate()
-
+    const { toast } = useToast()
     const handleThumbnailChange = (e) => {
         setThumbnail(e.target.files[0]);
     };
@@ -39,12 +39,19 @@ function UploadVideo() {
         try {
             setLoader(true)
             await dispatch(publishVideo(formData)).unwrap();
-            alert("Successfully Video Uploaded");
+            //alert("Successfully Video Uploaded");
+            toast({
+                title: "Successfully Video Uploaded",
+              });
             setLoader(false)
             navigate("/your_channel");
         } catch (error) {
             console.log("Video Upload error: ", error);
-            alert(" Something went worng ?");
+            //alert("Something went worng ?");
+            toast({
+                variant: "destructive",
+                title: "Something went worng ?",
+              });
             setLoader(false)
         }
     };

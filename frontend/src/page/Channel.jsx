@@ -3,11 +3,9 @@ import { useState, useEffect } from "react";
 import React from 'react';
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import { useSelector , useDispatch} from 'react-redux';
-import axios from "axios";
 import { MdGridView, MdEqualizer } from "react-icons/md";
 import { getUserData } from '../Redux/slice/authSlice';
 import { deleteChannel} from '../Redux/slice/channelSlice';
-
 import { useToast } from "../hooks/use-toast"
 function Channel() {
   const data = useSelector((state) => state.auth.user);
@@ -43,7 +41,10 @@ function Channel() {
       dispatch(getUserData(data._id));
     } catch (error) {
       console.error("Error deleting channel:", error);
-      alert("Error deleting channel");
+      toast({
+        variant: "destructive",
+        title: "Error deleting channel",
+      });
     }
   };
 

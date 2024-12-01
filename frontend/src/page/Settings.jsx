@@ -5,14 +5,14 @@ import img from "../assets/gde-najti-ssylku-na-svoj-kanal-youtube.jpg"
 import { useState } from 'react'
 import { useSelector ,useDispatch} from 'react-redux';
 import { deleteAccount } from '../Redux/slice/authSlice';
-
+import { useToast } from "../hooks/use-toast"
 function Settings() {
 
     const [loader, setLoader] = useState(false)
     const userdata = useSelector((state) => state.auth.user);
     const dispatch = useDispatch();
     const navigate = useNavigate()
-
+    const { toast } = useToast()
     const handleDeleteClick = async () =>{
         const  value = confirm("Are you sure ?");
         if (value) { 
@@ -20,11 +20,19 @@ function Settings() {
                 setLoader(true)
                 dispatch(deleteAccount(userdata._id));
                 setLoader(false)
-                alert("Your account is deleted !");
+                //alert("Your account is deleted !");
+                toast({
+                    title: "Your account is deleted !",
+                  });
                 navigate("/signup");
             } catch (error) {
                 console.log("account delete error :",error);
-                alert(error);
+                //alert(error);
+                toast({
+                    variant: "destructive",
+                    title: error,
+                  });
+                
             }
         }  
     }

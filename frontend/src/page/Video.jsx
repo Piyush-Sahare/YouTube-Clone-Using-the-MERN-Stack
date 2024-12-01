@@ -6,7 +6,7 @@ import { FaUserCircle } from "react-icons/fa";
 import { useSelector, useDispatch } from 'react-redux';
 import { addToWatchHistory,} from '../Redux/slice/authSlice';
 import { fetchVideoById,incrementView} from '../Redux/slice/videoSlice';
-
+import { useToast } from '../hooks/use-toast';
 function Video() {
   const { id } = useParams();
   const [loading, setLoading] = useState(true);
@@ -14,6 +14,7 @@ function Video() {
   const [error, setError] = useState(null);
   const videoData = useSelector((state) => state.video.video);
   const dispatch = useDispatch();
+  const toast = useToast();
   const formatDate = (dateString) => {
     const options = { year: 'numeric', month: 'long' };
     const date = new Date(dateString);

@@ -3,13 +3,14 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from "react-redux";
 import { createChannel, clearError, clearSuccessMessage } from "../Redux/slice/channelSlice";
 import { getUserData } from "../Redux/slice/authSlice";
+import { useToast } from "../hooks/use-toast"
 
 const CreateChannel = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
   const [name, setName] = useState('');
   const [handle, setHandle] = useState('');
-
+  const { toast } = useToast()
   const dispatch = useDispatch();
   const { error, successMessage } = useSelector((state) => state.channel);
   const [loading, setLoading] = useState(false);
@@ -36,6 +37,9 @@ const CreateChannel = ({ isOpen, onClose }) => {
       if (result.meta.requestStatus === "fulfilled") {
         dispatch(getUserData(userId)); // Update user state
         onClose(); // Close modal
+        toast({
+          title: "Channel Created Successfully",
+        });
         setLoading(false);
         dispatch(clearError());
         dispatch(clearSuccessMessage());

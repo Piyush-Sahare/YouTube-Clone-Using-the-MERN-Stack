@@ -40,7 +40,10 @@ const publishAVideo = asyncHandler(async (req, res) => {
 
 const getAllVideos = asyncHandler(async (req, res) => {
   const videos = await Video.find(); // Fetch all videos from the Video collection
-
+  if (videos.length === 0) {
+    // Return 200 status with empty array if no videos are found
+    return res.status(200).json(new ApiResponse(200, [], "No videos found"));
+  }
   return res.status(200).json(new ApiResponse(200, videos, "Videos fetched successfully"));
 });
 
@@ -55,8 +58,12 @@ const getAllUserVideos = asyncHandler(async (req, res) => {
 
   const userVideos = await Video.find({ owner }); // Fetch all videos that match the owner's ID
 
-  if (!userVideos.length) {
-    return res.status(404).json(new ApiResponse(404, null, "No videos found for this user"));
+  // if (!userVideos.length) {
+  //   return res.status(404).json(new ApiResponse(404, null, "No videos found for this user"));
+  // }
+  if (userVideos.length === 0) {
+    // Return 200 status with empty array if no videos are found for the user
+    return res.status(200).json(new ApiResponse(200, [], "No videos found for this user"));
   }
 
   return res.status(200).json(new ApiResponse(200, userVideos, "User videos fetched successfully"));

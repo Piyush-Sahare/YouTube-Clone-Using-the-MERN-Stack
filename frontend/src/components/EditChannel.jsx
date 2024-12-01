@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { updateChannel, getChannel, clearError, clearSuccessMessage } from '../Redux/slice/channelSlice';
-
+import { useToast } from "../hooks/use-toast"
 function EditChannel() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -18,7 +18,7 @@ function EditChannel() {
   const [handle, setHandle] = useState('');
   const [description, setDescription] = useState('');
   const [loading, setLoading] = useState(false);
-
+  const { toast } = useToast()
   useEffect(() => {
     if (user?.channelId) {
       //console.log("Fetching channel for ID:", user.channelID);
@@ -62,12 +62,18 @@ function EditChannel() {
 
   useEffect(() => {
     if (error) {
-      alert(`Error: ${error}`);
+      //alert(`Error: ${error}`);
+      toast({
+        variant: "destructive",
+        title: `Error: ${error}`,
+      });
       dispatch(clearError());
     }
     if (successMessage) {
       setLoading(false);
-      alert(successMessage);
+      toast({
+        title: successMessage,
+      });
       dispatch(clearSuccessMessage());
       navigate('/your_channel');
     }

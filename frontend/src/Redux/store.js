@@ -32,6 +32,8 @@ const store = configureStore({
         auth: persistedAuthReducer,
         channel: persistedChannelReducer,
         video: persistedVideoReducer
+        
+
     },
 });
 

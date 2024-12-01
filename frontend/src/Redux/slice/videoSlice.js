@@ -15,8 +15,10 @@ const initialState = {
 export const fetchAllVideos = createAsyncThunk('/api/v1/videos/allVideo', async (_, { rejectWithValue }) => {
   try {
     const response = await axios.get('/api/v1/videos/allVideo');
+    
     return response.data.data;
   } catch (error) {
+    
     return rejectWithValue(error.response.data.message);
   }
 });
@@ -25,9 +27,10 @@ export const fetchAllVideos = createAsyncThunk('/api/v1/videos/allVideo', async 
 export const fetchAllUserVideos = createAsyncThunk('/api/v1/videos/allUserVideo', async (ownerId, { rejectWithValue }) => {
   try {
     const response = await axios.get(`/api/v1/videos/allUserVideo/${ownerId}`);
-    //console.log("setup",response.data.data);
+    
     return response.data.data;
   } catch (error) {
+    
     return rejectWithValue(error.response.data.message);
   }
 });
@@ -82,7 +85,11 @@ export const incrementView = createAsyncThunk('/api/v1/videos/incrementView', as
 const videoSlice = createSlice({
   name: 'videos',
   initialState,
-  reducers: {},
+  reducers: {
+    resetUserVideos: (state) => {
+      state.userVideos = []; // Reset the userVideos state
+    },
+  },
   extraReducers: (builder) => {
     // Handle fetchAllVideos actions
     builder
@@ -178,5 +185,7 @@ const videoSlice = createSlice({
       });
   },
 });
+
+export const { resetUserVideos } = videoSlice.actions;
 
 export default videoSlice.reducer;
