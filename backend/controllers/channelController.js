@@ -60,11 +60,19 @@ export const getChannel = async (req, res) => {
 export const updateChannel = asyncHandler(async (req, res) => {
   const { name, handle, description } = req.body;
 
-  // Upload banner to Cloudinary if provided
-  let bannerName;
-  if (req.file) {
-      const bannerLocalPath = req.file.path;
+  // Initialize variables for banner and avatar
+  let bannerName, avatarName;
+
+  // If 'banner' file is uploaded
+  if (req.files && req.files.banner) {
+      const bannerLocalPath = req.files.banner[0].path;
       bannerName = await uploadOnCloudinary(bannerLocalPath);
+  }
+
+  // If 'avatar' file is uploaded
+  if (req.files && req.files.avatar) {
+      const avatarLocalPath = req.files.avatar[0].path;
+      avatarName = await uploadOnCloudinary(avatarLocalPath);
   }
 
   // Prepare the data to update
@@ -73,18 +81,22 @@ export const updateChannel = asyncHandler(async (req, res) => {
   if (handle) updateData.handle = handle;
   if (description) updateData.description = description;
   if (bannerName) {
-      updateData.banner = bannerName.url; // Set the new avatar URL if uploaded
+      updateData.banner = bannerName.url; // Set the new banner URL if uploaded
+  }
+  if (avatarName) {
+    updateData.avatar = avatarName.url; // Set the new avatar URL if uploaded
   }
 
-  // Update the user document in the database
-  const user = await Channel.findByIdAndUpdate(
+  // Update the channel document in the database
+  const channel = await Channel.findByIdAndUpdate(
       req.params.id,
       { $set: updateData },
       { new: true } // Return the updated document
   );
 
-  return res.status(200).json(new ApiResponse(200, user, "Account details updated successfully"));
+  return res.status(200).json(new ApiResponse(200, channel, "Channel updated successfully"));
 });
+
 
 
 

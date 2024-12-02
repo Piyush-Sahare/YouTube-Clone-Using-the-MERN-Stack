@@ -1,11 +1,12 @@
 //frontend/src/components/Uploadvideo.jsx
 import { Link, useNavigate } from 'react-router-dom'
-import React, { useState } from 'react';
+import React, { useState ,useEffect} from 'react';
 import { FiX } from 'react-icons/fi';
 import { HiPlus } from 'react-icons/hi';
 import { useDispatch } from 'react-redux';
 import { publishVideo } from '../Redux/slice/videoSlice';
 import { useToast } from "../hooks/use-toast"
+import { useLocation } from "react-router-dom";
 
 function UploadVideo() {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -15,10 +16,16 @@ function UploadVideo() {
     const [videoFile, setVideoFile] = useState(null);
     const [loader, setLoader] = useState(false)
     const dispatch = useDispatch();
+    const location = useLocation();
+    useEffect(() => {
+        if (location.state?.openModal) {
+          setIsModalOpen(true);
+        }
+      }, [location.state]);
     const handleToggleModal = () => {
         setIsModalOpen(!isModalOpen);
     };
-
+   
     const navigate = useNavigate()
     const { toast } = useToast()
     const handleThumbnailChange = (e) => {

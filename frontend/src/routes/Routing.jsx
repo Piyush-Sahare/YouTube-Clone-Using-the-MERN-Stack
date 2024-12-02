@@ -4,7 +4,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import store from '../Redux/store.js';
 import App from '../App';
-import { Home, YourChannel, History, Playlist, CustomizeAccount,EditChannel, Signup, Login, Settings, Shorts, Video, UploadVideo, AllVideo, AuthLayout, } from '../components';
+import { Home, Dashboard, History, Playlist, EditAccount,EditChannel, Signup, Login, Settings, Shorts, Video, UploadVideo, AllVideo, AuthLayout, } from '../components';
 
 function Routing() {
     return (
@@ -16,7 +16,7 @@ function Routing() {
 
                         <Route path='your_channel/*' element={
                             <AuthLayout>
-                                <YourChannel />
+                                <Dashboard/>
                             </AuthLayout>
                         }>
                             <Route index element={
@@ -55,9 +55,9 @@ function Routing() {
                         <Route path='watch/:id' element={
                             <Video />
                         } />
-                        <Route path='CustomizeAccount' element={
+                        <Route path='EditAccount' element={
                             <AuthLayout>
-                                < CustomizeAccount />
+                                <EditAccount />
                             </AuthLayout>
                         } />
 

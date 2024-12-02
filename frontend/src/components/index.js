@@ -2,10 +2,10 @@
 import Home from "../page/Home";
 import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
-import YourChannel from "../page/Channel";
+import Dashboard from "../page/Dashboard";
 import History from "../page/History";
 import Playlist from "./Playlist";
-import CustomizeAccount from "./CustomizeAccount";
+import EditAccount from "./EditAccount";
 import Login from "../page/Login";
 import Signup from "../page/Signup";
 import Settings from "../page/Settings";
@@ -20,10 +20,10 @@ export {
     Home,
     Navbar,
     Sidebar,
-    YourChannel,
+    Dashboard,
     History,
     Playlist,
-    CustomizeAccount,
+    EditAccount,
     Login,
     Signup,
     Settings,

@@ -7,26 +7,23 @@ import { MdGridView, MdEqualizer } from "react-icons/md";
 import { getUserData } from '../Redux/slice/authSlice';
 import { deleteChannel} from '../Redux/slice/channelSlice';
 import { useToast } from "../hooks/use-toast"
-function Channel() {
+import { getChannel } from "../Redux/slice/channelSlice";
+function Dashboard() {
   const data = useSelector((state) => state.auth.user);
-  
-  //console.log(data);
-  const [userdata, setUserData] = useState();
+  const channelData = useSelector((state) => state.channel.channel);
+  //console.log("channel",channelData.name);
+  //const [userdata, setUserData] = useState();
   const navigate = useNavigate(); 
   const dispatch = useDispatch();
   const { toast } = useToast()
-  useEffect(() => {
-    if (data._id) {
-      dispatch(getUserData(data._id)); // Dispatch the action to get user data
-    }
-  }, [data._id, dispatch]);
-
+  
   useEffect(() => {
     if (data) {
-      setUserData(data); // Once user data is in the Redux store, update the local state
+      dispatch(getChannel(data.channelId));
     }
   }, [data]);
 //console.log(data);
+
   const handleDeleteChannel = async () => {
     const confirmDelete = window.confirm("Are you sure you want to delete your channel? This action cannot be undone.");
     if (!confirmDelete) return;
@@ -38,7 +35,7 @@ function Channel() {
         description: "You will be redirected to the home page.",
       });
       navigate("/"); // Redirect user to the home page after deletion
-      dispatch(getUserData(data._id));
+      dispatch(getUserData(data._id)); //update user state
     } catch (error) {
       console.error("Error deleting channel:", error);
       toast({
@@ -59,14 +56,16 @@ function Channel() {
   return (
     <>
       <div className="lg:mt-8 bg-white grid grid-cols-1 px-8 pt-6 xl:grid-cols-3 xl:gap-4">
-        <div className="mb-4 col-span-full xl:mb-2">
+        <div className="w-10/12 ml-6 mb-4 col-span-full xl:mb-2">
+           <img className="w-full h-36 rounded-sm" src={channelData.banner} alt="not found" />
           <div className="mt-4 flex items-center gap-5">
-            {userdata ? (
+            {channelData ? (
               <>
-                <img className="w-28 h-28 rounded-full" src={userdata.avatar} alt="not found" />
+                <img className="w-28 h-28 rounded-full" src={channelData.avatar} alt="not found" />
                 <div className="font-bold dark:text-black">
-                  <div className="text-lg">{(userdata.name || "Admin").toUpperCase()}</div>
-                  <div className="text-sm mb-3 text-gray-500">Joined in {formatDate(userdata.createdAt)}</div>
+                  <div className="text-lg">{(channelData.name || "Admin").toUpperCase()}</div>
+                  <div className="text-sm mb-3 text-gray-500">{(channelData.handle)}</div>
+                  <div className="text-sm mb-3 text-gray-500">Joined in {formatDate(channelData.createdAt)}</div>
                   <Link to={"/edit_channel"}>
                     <button type="button" className="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-full text-sm px-2.5 py-2.5 me-2">Customize channel</button>
                   </Link>
@@ -114,4 +113,4 @@ function Channel() {
   );
 }
 
-export default Channel;
+export default Dashboard;

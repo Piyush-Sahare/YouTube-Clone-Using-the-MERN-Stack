@@ -10,7 +10,10 @@ const router = Router();
 // Route to create a channel
 router.route("/create").post(verifyJWT,createChannel);
 router.route("/data/:id").get(getChannel);
-router.route("/update/:id").put(upload.single("banner"),updateChannel);
+//router.route("/update/:id").put(upload.single("banner"),updateChannel);
+router.route("/update/:id")
+  .put(upload.fields([{ name: "banner", maxCount: 1 }, { name: "avatar", maxCount: 1 }]), updateChannel);
+
 router.route("/delete/:id").delete(verifyJWT,deleteChannel);
 
 

@@ -4,13 +4,14 @@ import axios from 'axios';
 import { Link, useParams } from 'react-router-dom';
 import { FaUserCircle } from "react-icons/fa";
 import { useSelector, useDispatch } from 'react-redux';
-import { addToWatchHistory,} from '../Redux/slice/authSlice';
-import { fetchVideoById,incrementView} from '../Redux/slice/videoSlice';
+import { addToWatchHistory, } from '../Redux/slice/authSlice';
+import { fetchVideoById, incrementView } from '../Redux/slice/videoSlice';
 import { useToast } from '../hooks/use-toast';
 function Video() {
   const { id } = useParams();
   const [loading, setLoading] = useState(true);
   const [userData, setUserData] = useState(null);
+  const [channelData, setchannelData] = useState(null);
   const [error, setError] = useState(null);
   const videoData = useSelector((state) => state.video.video);
   const dispatch = useDispatch();
@@ -20,7 +21,7 @@ function Video() {
     const date = new Date(dateString);
     return date.toLocaleDateString(undefined, options);
   };
-console.log("videodata",videoData);
+  
   useEffect(() => {
     const fetchVideoData = async () => {
       try {
@@ -31,10 +32,10 @@ console.log("videodata",videoData);
         setLoading(false);
       }
     };
-
+    
     fetchVideoData();
   }, [id]);
-
+  //console.log("videodata", videoData);
   useEffect(() => {
     const IncrementViewCount = async () => {
       try {
@@ -74,6 +75,23 @@ console.log("videodata",videoData);
       fetchUser();
     }
   }, [videoData]);
+ 
+  useEffect(() => {
+    if (videoData && videoData.owner) {
+      const fetchChannel = async () => {
+        try {
+          const response = await axios.get(`/api/v1/channel/data/${videoData.channelId}`);
+          setchannelData(response.data.data);
+
+        } catch (error) {
+          console.error('Error fetching user data:', error);
+        }
+      };
+
+      fetchChannel();
+    }
+  }, [videoData]);
+  console.log("channeldata", channelData);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -88,7 +106,7 @@ console.log("videodata",videoData);
   }
 
   return (
-    <div className="lg:mt-8 bg-white grid grid-cols-1 px-8 pt-6 xl:grid-cols-3 xl:gap-4">
+    <div className="lg:mt-8 bg-white grid grid-cols-1 px-8 pt-4 xl:grid-cols-3 xl:gap-4 ">
       <div className="mb-4 col-span-full xl:mb-2">
         <section className="pb-5 mt-3">
           <div className="container mx-auto">
@@ -97,8 +115,11 @@ console.log("videodata",videoData);
                 <section>
                   <div className="row">
                     <div className="col">
-                      <div className="relative video-wrap" style={{ height: "465px" }}>
-                        <video className=" w-full h-full" controls>
+                      <div className="relative  video-wrap" style={{ height: "465px", width: '100%' }}>
+                        <video
+                          className="w-[65%] h-[90%] object-cover rounded-md" 
+                          controls
+                        >
                           <source src={videoData.videoFile} type="video/mp4" />
                           Your browser does not support the video tag.
                         </video>
@@ -114,14 +135,14 @@ console.log("videodata",videoData);
                     <div className="border-b border-b-gray-100">
                       <ul className="-mb-px flex items-center gap-5 text-sm font-sm">
                         <li>
-                          {userData ? (
+                          {channelData ? (
                             <Link className="inline-flex cursor-pointer items-center gap-3 px-1 py-3 text-black hover:text-gray-700 ">
                               <img
                                 className="w-12 h-12 rounded-full"
-                                src={userData.avatar}
+                                src={channelData.avatar}
                                 alt="User"
                               />
-                              {userData.name}
+                              {channelData.name}
                             </Link>
                           ) : (
                             <div>Loading user data...</div>

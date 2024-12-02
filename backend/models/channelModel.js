@@ -16,7 +16,9 @@ const channelSchema = new Schema(
     },
     banner: {
       type: String,
-      
+    },
+    avatar: {
+      type: String,
     },
     description: {
       type: String,

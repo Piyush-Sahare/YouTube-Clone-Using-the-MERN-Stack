@@ -117,7 +117,7 @@ const channelSlice = createSlice({
             })
             .addCase(getChannel.fulfilled, (state, action) => {
                 state.loading = false;
-                state.channel = action.payload; // Extract the `data` property
+                state.channel = action.payload; 
                 //console.log("Channel state updated:", state.channel); // Debugging log
             })
             .addCase(getChannel.rejected, (state, action) => {
