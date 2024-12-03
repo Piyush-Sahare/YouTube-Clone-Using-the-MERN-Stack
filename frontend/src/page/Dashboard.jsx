@@ -64,7 +64,7 @@ function Dashboard() {
                 <img className="w-28 h-28 rounded-full" src={channelData.avatar} alt="not found" />
                 <div className="font-bold dark:text-black">
                   <div className="text-lg">{(channelData.name || "Admin").toUpperCase()}</div>
-                  <div className="text-sm mb-3 text-gray-500">{(channelData.handle)}</div>
+                  <div className="text-sm mb-3 text-gray-500">@{(channelData.handle)}</div>
                   <div className="text-sm mb-3 text-gray-500">Joined in {formatDate(channelData.createdAt)}</div>
                   <Link to={"/edit_channel"}>
                     <button type="button" className="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-full text-sm px-2.5 py-2.5 me-2">Customize channel</button>

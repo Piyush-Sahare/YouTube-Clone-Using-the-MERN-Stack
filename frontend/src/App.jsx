@@ -8,20 +8,32 @@ function App() {
   const location = useLocation();
   const isVideoPage = location.pathname.startsWith("/watch");
 
+
   useEffect(() => {
+    // Close the sidebar when on a video page
+    if (isVideoPage) {
+      setIsOpen(false);
+    } else if (window.innerWidth >= 769) {
+      // Reset to default state based on window size if not on a video page
+      setIsOpen(true);
+    }
+
+    // Listen for window resize events and adjust the sidebar visibility
     const handleResize = () => {
       if (window.innerWidth < 769) {
         setIsOpen(false);
-      } else {
+      } else if (!isVideoPage) {
         setIsOpen(true);
       }
     };
+
     window.addEventListener("resize", handleResize);
+    handleResize(); // Call immediately to set the correct sidebar state based on window size
 
-    handleResize();
-
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [isVideoPage]);
 
   return (
     <>

@@ -1,27 +1,30 @@
-//frontend/src/page/Video.jsx
+// //frontend/src/page/Video.jsx
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link, useParams } from 'react-router-dom';
 import { FaUserCircle } from "react-icons/fa";
 import { useSelector, useDispatch } from 'react-redux';
-import { addToWatchHistory, } from '../Redux/slice/authSlice';
+import { addToWatchHistory } from '../Redux/slice/authSlice';
 import { fetchVideoById, incrementView } from '../Redux/slice/videoSlice';
 import { useToast } from '../hooks/use-toast';
+import CustomVideoPlayer from '../components/CustomVideoPlayer';
+
 function Video() {
   const { id } = useParams();
   const [loading, setLoading] = useState(true);
   const [userData, setUserData] = useState(null);
-  const [channelData, setchannelData] = useState(null);
+  const [channelData, setChannelData] = useState(null);
   const [error, setError] = useState(null);
   const videoData = useSelector((state) => state.video.video);
   const dispatch = useDispatch();
   const toast = useToast();
+
   const formatDate = (dateString) => {
     const options = { year: 'numeric', month: 'long' };
     const date = new Date(dateString);
     return date.toLocaleDateString(undefined, options);
   };
-  
+
   useEffect(() => {
     const fetchVideoData = async () => {
       try {
@@ -32,12 +35,11 @@ function Video() {
         setLoading(false);
       }
     };
-    
     fetchVideoData();
   }, [id]);
-  //console.log("videodata", videoData);
+
   useEffect(() => {
-    const IncrementViewCount = async () => {
+    const incrementViewCount = async () => {
       try {
         await dispatch(incrementView(id)).unwrap();
         console.log('View count incremented');
@@ -45,7 +47,7 @@ function Video() {
         console.error('Error incrementing view count:', error);
       }
     };
-    IncrementViewCount();
+    incrementViewCount();
   }, [id]);
 
   useEffect(() => {
@@ -66,116 +68,97 @@ function Video() {
         try {
           const response = await axios.get(`/api/v1/account/userData/${videoData.owner}`);
           setUserData(response.data.data);
-
         } catch (error) {
           console.error('Error fetching user data:', error);
         }
       };
-
       fetchUser();
     }
   }, [videoData]);
- 
+
   useEffect(() => {
-    if (videoData && videoData.owner) {
+    if (videoData && videoData.channelId) {
       const fetchChannel = async () => {
         try {
           const response = await axios.get(`/api/v1/channel/data/${videoData.channelId}`);
-          setchannelData(response.data.data);
-
+          setChannelData(response.data.data);
         } catch (error) {
-          console.error('Error fetching user data:', error);
+          console.error('Error fetching channel data:', error);
         }
       };
-
       fetchChannel();
     }
   }, [videoData]);
-  console.log("channeldata", channelData);
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
-
-  if (!videoData) {
-    return <div>No video data found.</div>;
-  }
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
+  if (!videoData) return <div>No video data found.</div>;
 
   return (
-    <div className="lg:mt-8 bg-white grid grid-cols-1 px-8 pt-4 xl:grid-cols-3 xl:gap-4 ">
-      <div className="mb-4 col-span-full xl:mb-2">
-        <section className="pb-5 mt-3">
-          <div className="container mx-auto">
-            <div className="row">
-              <div className="col-lg-9 col-xl-9">
-                <section>
-                  <div className="row">
-                    <div className="col">
-                      <div className="relative  video-wrap" style={{ height: "465px", width: '100%' }}>
-                        <video
-                          className="w-[65%] h-[90%] object-cover rounded-md" 
-                          controls
-                        >
-                          <source src={videoData.videoFile} type="video/mp4" />
-                          Your browser does not support the video tag.
-                        </video>
-                      </div>
-                    </div>
-                  </div>
-                </section>
+    <div className="bg-white min-h-screen">
+      {/* Main Content */}
+      <div className="container mx-auto px-4 py-6 mt-3">
+        <div className="flex flex-col xl:flex-row gap-6">
+          {/* Video Player Section */}
+          <div className="flex-1">
+            <CustomVideoPlayer  src={videoData.videoFile} />
+            <h1 className="mt-4 text-2xl font-semibold">{videoData.title}</h1>
 
-                <div className="mt-4">
-                  <h1 className="mb-3 text-xl truncate">{videoData.title}</h1>
-
-                  <div>
-                    <div className="border-b border-b-gray-100">
-                      <ul className="-mb-px flex items-center gap-5 text-sm font-sm">
-                        <li>
-                          {channelData ? (
-                            <Link className="inline-flex cursor-pointer items-center gap-3 px-1 py-3 text-black hover:text-gray-700 ">
-                              <img
-                                className="w-12 h-12 rounded-full"
-                                src={channelData.avatar}
-                                alt="User"
-                              />
-                              {channelData.name}
-                            </Link>
-                          ) : (
-                            <div>Loading user data...</div>
-                          )}
-                        </li>
-                        <li>
-                          <Link className="inline-flex cursor-pointer items-center gap-2 px-1 py-3 text-gray-600 hover:text-black" >
-                            <FaUserCircle className="h-5 w-5" />
-                            Subscribe
-                            <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs font-semibold text-gray-600"> 303k </span>
-                          </Link>
-                        </li>
-
-                        <li>
-                          <Link className="inline-flex cursor-pointer items-center gap-2 px-1 py-3 text-gray-600 hover:text-black">
-                            <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs font-semibold text-gray-600"> {videoData.views} views </span>
-                          </Link>
-                        </li>
-                        <li>
-                          <Link className="inline-flex cursor-pointer items-center gap-2 px-1 py-3 text-gray-600 hover:text-black">
-
-                            <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs font-semibold text-gray-600">{formatDate(videoData.createdAt)}</span>
-                          </Link>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-                  <p className='truncate'>{videoData.description}</p>
-                </div>
+            {/* Video Metadata */}
+            <div className="mt-2 flex items-center justify-between text-sm text-gray-600">
+              <div className="flex items-center gap-3">
+                {channelData && (
+                  <Link
+                    to={`/channel/${videoData.channelId}`}
+                    className="flex items-center gap-2 hover:text-black"
+                  >
+                    <img
+                      className="w-10 h-10 rounded-full"
+                      src={channelData.avatar}
+                      alt="Channel Avatar"
+                    />
+                    <span className="font-medium">{channelData.name}</span>
+                  </Link>
+                )}
               </div>
+
             </div>
           </div>
-        </section>
+
+          {/* Suggested Videos */}
+          <div className="w-full xl:w-96">
+            <h2 className="mb-4 text-lg font-semibold">Up Next</h2>
+            <ul className="space-y-4">
+              {/* Example suggested videos */}
+              {videoData.relatedVideos?.map((relatedVideo) => (
+                <li key={relatedVideo.id} className="flex gap-4">
+                  <img
+                    className="w-32 h-20 object-cover rounded"
+                    src={relatedVideo.thumbnail}
+                    alt={relatedVideo.title}
+                  />
+                  <div className="flex flex-col">
+                    <Link to={`/video/${relatedVideo.id}`} className="font-semibold hover:text-red-500">
+                      {relatedVideo.title}
+                    </Link>
+                    <span className="text-sm text-gray-500">
+                      {relatedVideo.channelName} • {relatedVideo.views} views
+                    </span>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        {/* Video Description */}
+        <div className="mt-6 p-4 bg-gray-100 rounded shadow-sm">
+          <div className="flex items-center gap-3">
+            <span>{videoData.views} views</span>
+            <span>{formatDate(videoData.createdAt)}</span>
+          </div>
+          <p className="text-sm text-gray-700">{videoData.description}</p>
+        </div>
       </div>
     </div>
   );

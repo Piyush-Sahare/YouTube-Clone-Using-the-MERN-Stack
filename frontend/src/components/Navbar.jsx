@@ -63,7 +63,7 @@ function Navbar({ openChange }) {
             <div className="flex items-center justify-start">
               <button
                 onClick={toggleSidebar}
-                className="fixed top-1 lg:top-2 left-3 z-40 flex items-center justify-center w-10 h-10 bg-white rounded-full shadow-md hover:bg-gray-100 group"
+                className="fixed top-1 lg:top-2 left-3 z-40 flex items-center justify-center w-10 h-10 bg-white rounded-full  hover:bg-gray-100 group"
               >
                 <FiMenu className="w-6 h-6" />
               </button>
