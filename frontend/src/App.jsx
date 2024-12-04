@@ -6,8 +6,11 @@ import { useState, useEffect } from "react";
 function App() {
   const [isOpen, setIsOpen] = useState(true);
   const location = useLocation();
+  const [searchTerm, setSearchTerm] = useState("");
   const isVideoPage = location.pathname.startsWith("/watch");
-
+  const handleSearch = (term) => {
+    setSearchTerm(term); // Update the search term
+  };
 
   useEffect(() => {
     // Close the sidebar when on a video page
@@ -37,7 +40,8 @@ function App() {
 
   return (
     <>
-      <Navbar openChange={() => setIsOpen((prev) => !prev)} />
+      {/* <Navbar openChange={() => setIsOpen((prev) => !prev)} /> */}
+      <Navbar openChange={() => setIsOpen((prev) => !prev)} onSearch={handleSearch} />
       <div
         className={`flex pt-8 overflow-hidden bg-white ${
           isVideoPage && isOpen ? "relative" : ""
@@ -55,7 +59,7 @@ function App() {
           }}
         >
           <main>
-            <Outlet />
+            <Outlet context={{ searchTerm }} />
           </main>
         </div>
       </div>

@@ -11,7 +11,7 @@ import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined
 import CreateChannel from './CreateChannel';
 import { useToast } from "../hooks/use-toast";
 import { RiVideoUploadLine } from "react-icons/ri";
-function Navbar({ openChange }) {
+function Navbar({ openChange,onSearch }) {
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false); // Modal visibility state
   const dispatch = useDispatch();
@@ -19,6 +19,7 @@ function Navbar({ openChange }) {
   const authStatus = useSelector((state) => state.auth.status);
   const userdata = useSelector((state) => state.auth.user); // Access user data from Redux store
   const { toast } = useToast()
+  const [searchTerm, setSearchTerm] = useState("");
   const toggleSidebar = () => {
     console.log("Sidebar toggle triggered");
     openChange();
@@ -34,6 +35,12 @@ function Navbar({ openChange }) {
 
   const closeModal = () => {
     setIsModalOpen(false); // Close the modal
+  };
+
+  const handleSearchChange = (e) => {
+    const value = e.target.value;
+    setSearchTerm(value); // Update search term
+    onSearch(value); // Pass the search term to the parent
   };
 
   const handleUploadClick = () => {
@@ -90,6 +97,8 @@ function Navbar({ openChange }) {
                     style={{ height: 34 }}
                     name="search"
                     id="topbar-search"
+                    value={searchTerm} // Controlled input
+                    onChange={handleSearchChange} // Handle search change
                     className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2.5"
                     placeholder="Search"
                   />

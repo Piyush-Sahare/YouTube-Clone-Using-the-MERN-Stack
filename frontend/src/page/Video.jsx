@@ -8,17 +8,16 @@ import { addToWatchHistory } from '../Redux/slice/authSlice';
 import { fetchVideoById, incrementView } from '../Redux/slice/videoSlice';
 import { useToast } from '../hooks/use-toast';
 import CustomVideoPlayer from '../components/CustomVideoPlayer';
+import Comments from '../components/Comments';
 
 function Video() {
   const { id } = useParams();
   const [loading, setLoading] = useState(true);
-  const [userData, setUserData] = useState(null);
-  const [channelData, setChannelData] = useState(null);
   const [error, setError] = useState(null);
   const videoData = useSelector((state) => state.video.video);
   const dispatch = useDispatch();
   const toast = useToast();
-
+   //console.log(videoData);
   const formatDate = (dateString) => {
     const options = { year: 'numeric', month: 'long' };
     const date = new Date(dateString);
@@ -62,33 +61,6 @@ function Video() {
     AddToWatchHistory();
   }, [id]);
 
-  useEffect(() => {
-    if (videoData && videoData.owner) {
-      const fetchUser = async () => {
-        try {
-          const response = await axios.get(`/api/v1/account/userData/${videoData.owner}`);
-          setUserData(response.data.data);
-        } catch (error) {
-          console.error('Error fetching user data:', error);
-        }
-      };
-      fetchUser();
-    }
-  }, [videoData]);
-
-  useEffect(() => {
-    if (videoData && videoData.channelId) {
-      const fetchChannel = async () => {
-        try {
-          const response = await axios.get(`/api/v1/channel/data/${videoData.channelId}`);
-          setChannelData(response.data.data);
-        } catch (error) {
-          console.error('Error fetching channel data:', error);
-        }
-      };
-      fetchChannel();
-    }
-  }, [videoData]);
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
@@ -107,19 +79,20 @@ function Video() {
             {/* Video Metadata */}
             <div className="mt-2 flex items-center justify-between text-sm text-gray-600">
               <div className="flex items-center gap-3">
-                {channelData && (
+                
                   <Link
                     to={`/channel/${videoData.channelId}`}
                     className="flex items-center gap-2 hover:text-black"
                   >
                     <img
                       className="w-10 h-10 rounded-full"
-                      src={channelData.avatar}
+
+                      src={videoData.channelId.avatar}
                       alt="Channel Avatar"
                     />
-                    <span className="font-medium">{channelData.name}</span>
+                    <span className="font-medium">{videoData.channelId.name}</span>
                   </Link>
-                )}
+                
               </div>
 
             </div>
@@ -159,6 +132,7 @@ function Video() {
           </div>
           <p className="text-sm text-gray-700">{videoData.description}</p>
         </div>
+        <Comments videoId={id} />
       </div>
     </div>
   );

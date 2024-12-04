@@ -1,3 +1,4 @@
+// // frontend/src/components/CustomVideoPlayer.jsx
 import React, { useRef, useState, useEffect } from "react";
 import {
   FaPlay,
@@ -11,7 +12,7 @@ import {
 
 const CustomYouTubePlayer = ({ src }) => {
   const videoRef = useRef(null);
-  const [isPlaying, setIsPlaying] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(true);
   const [isMuted, setIsMuted] = useState(false);
   const [volume, setVolume] = useState(1);
   const [currentTime, setCurrentTime] = useState(0);
@@ -87,7 +88,7 @@ const CustomYouTubePlayer = ({ src }) => {
 
   return (
     <div
-      className="relative bg-white w-full max-w-screen-lg mx-auto overflow-hidden"
+      className="relative  w-full max-w-screen-lg mx-auto overflow-hidden"
       onMouseMove={showControls}
       onClick={showControls}
     >
@@ -103,9 +104,8 @@ const CustomYouTubePlayer = ({ src }) => {
 
       {/* Controls */}
       <div
-        className={`absolute bg-white bottom-0 left-0 right-0 transition-opacity duration-300 ${
-          isControlsVisible ? "opacity-100" : "opacity-0"
-        } bg-black/80 p-3 flex flex-col gap-2`}
+        className={`absolute bottom-0 left-0 right-0 transition-opacity duration-300 ${isControlsVisible ? "opacity-100" : "opacity-0"
+          } bg-black/80 p-3 flex flex-col gap-2`}
       >
         {/* Play/Pause Button */}
         <div className="flex items-center justify-between">
@@ -132,7 +132,7 @@ const CustomYouTubePlayer = ({ src }) => {
             <span className="text-xs text-white">{formatTime(duration)}</span>
           </div>
 
-          {/* Volume Control */}
+        {/* Volume Control */}
           <div className="flex items-center gap-2 m-2">
             <button
               onClick={toggleMute}
@@ -148,10 +148,11 @@ const CustomYouTubePlayer = ({ src }) => {
               value={volume}
               onChange={handleVolumeChange}
               className="h-1 w-20 bg-gray-500 rounded-lg appearance-none cursor-pointer accent-red-500"
+              style={{
+                background: `linear-gradient(to right, red ${volume * 100}%, #e5e5e5 ${volume * 100}%)`
+              }}
             />
           </div>
-
-         
 
           {/* Fullscreen */}
           <button

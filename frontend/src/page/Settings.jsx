@@ -80,7 +80,7 @@ function Settings() {
                         </th>
                         <td 
                         className="px-6 py-4">
-                            <Link to={"/CustomizeAccount"} 
+                            <Link to={"/EditAccount"} 
                             className="font-medium text-blue-600  hover:underline">Edit</Link>
                         </td>
                     </tr>

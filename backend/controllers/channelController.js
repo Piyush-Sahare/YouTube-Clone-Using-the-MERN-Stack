@@ -102,6 +102,7 @@ export const updateChannel = asyncHandler(async (req, res) => {
 
 // delete channel
 export const deleteChannel = async (req, res) => {
+  console.log(req);
   const channelId = req.params.id; // Channel ID from the request parameter
 
   try {

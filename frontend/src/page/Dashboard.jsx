@@ -11,7 +11,7 @@ import { getChannel } from "../Redux/slice/channelSlice";
 function Dashboard() {
   const data = useSelector((state) => state.auth.user);
   const channelData = useSelector((state) => state.channel.channel);
-  //console.log("channel",channelData.name);
+  //console.log("channel",channelData);
   //const [userdata, setUserData] = useState();
   const navigate = useNavigate(); 
   const dispatch = useDispatch();
@@ -56,12 +56,12 @@ function Dashboard() {
   return (
     <>
       <div className="lg:mt-8 bg-white grid grid-cols-1 px-8 pt-6 xl:grid-cols-3 xl:gap-4">
-        <div className="w-10/12 ml-6 mb-4 col-span-full xl:mb-2">
-           <img className="w-full h-36 rounded-sm" src={channelData.banner} alt="not found" />
+        <div className="w-full ml-2 mb-4 col-span-full xl:mb-2">
+           <img className="w-full h-36 rounded-sm" src={channelData.banner} />
           <div className="mt-4 flex items-center gap-5">
             {channelData ? (
               <>
-                <img className="w-28 h-28 rounded-full" src={channelData.avatar} alt="not found" />
+                <img className="w-28 h-28  rounded-full" src={channelData.avatar}  />
                 <div className="font-bold dark:text-black">
                   <div className="text-lg">{(channelData.name || "Admin").toUpperCase()}</div>
                   <div className="text-sm mb-3 text-gray-500">@{(channelData.handle)}</div>

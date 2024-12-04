@@ -1,11 +1,11 @@
-//frontend/src/components/Uploadvideo.jsx
-import { Link, useNavigate } from 'react-router-dom'
-import React, { useState ,useEffect} from 'react';
+// //frontend/src/components/Uploadvideo.jsx
+import { Link, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
 import { FiX } from 'react-icons/fi';
 import { HiPlus } from 'react-icons/hi';
 import { useDispatch } from 'react-redux';
 import { publishVideo } from '../Redux/slice/videoSlice';
-import { useToast } from "../hooks/use-toast"
+import { useToast } from "../hooks/use-toast";
 import { useLocation } from "react-router-dom";
 
 function UploadVideo() {
@@ -14,20 +14,24 @@ function UploadVideo() {
     const [description, setDescription] = useState("");
     const [thumbnail, setThumbnail] = useState(null);
     const [videoFile, setVideoFile] = useState(null);
-    const [loader, setLoader] = useState(false)
+    const [tags, setTags] = useState(""); // New state for tags
+    const [loader, setLoader] = useState(false);
     const dispatch = useDispatch();
     const location = useLocation();
+
     useEffect(() => {
         if (location.state?.openModal) {
-          setIsModalOpen(true);
+            setIsModalOpen(true);
         }
-      }, [location.state]);
+    }, [location.state]);
+
     const handleToggleModal = () => {
         setIsModalOpen(!isModalOpen);
     };
-   
-    const navigate = useNavigate()
-    const { toast } = useToast()
+
+    const navigate = useNavigate();
+    const { toast } = useToast();
+
     const handleThumbnailChange = (e) => {
         setThumbnail(e.target.files[0]);
     };
@@ -43,39 +47,45 @@ function UploadVideo() {
         formData.append('description', description);
         formData.append('thumbnail', thumbnail);
         formData.append('videoFile', videoFile);
+        formData.append('tags', tags); // Add tags to formData
+
         try {
-            setLoader(true)
+            setLoader(true);
             await dispatch(publishVideo(formData)).unwrap();
-            //alert("Successfully Video Uploaded");
             toast({
                 title: "Successfully Video Uploaded",
-              });
-            setLoader(false)
+            });
+            setLoader(false);
             navigate("/your_channel");
         } catch (error) {
             console.log("Video Upload error: ", error);
-            //alert("Something went worng ?");
             toast({
                 variant: "destructive",
-                title: "Something went worng ?",
-              });
-            setLoader(false)
+                title: "Something went wrong!",
+            });
+            setLoader(false);
         }
     };
 
     return (
-        loader ?
-            <div className="text-center  my-44 ">
+        loader ? (
+            <div className="text-center my-44">
                 <div className="p-4 text-center">
                     <div role="status">
-                        <span className="">Your Video is Uploading...</span>
+                        <span>Your Video is Uploading...</span>
                     </div>
                 </div>
             </div>
-            :
+        ) : (
             <>
-                <div className='text-center'>
-                    <button onClick={handleToggleModal} type="button" className="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-full text-sm px-5 py-2.5 me-2 mb-2 mt-4">Create</button>
+                <div className="text-center">
+                    <button
+                        onClick={handleToggleModal}
+                        type="button"
+                        className="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-full text-sm px-5 py-2.5 me-2 mb-2 mt-4"
+                    >
+                        Create
+                    </button>
                 </div>
 
                 {isModalOpen && (
@@ -132,6 +142,19 @@ function UploadVideo() {
                                         />
                                     </div>
                                     <div className="col-span-2">
+                                        <label htmlFor="tags" className="block mb-2 text-sm font-medium text-gray-900">Tags</label>
+                                        <input
+                                            type="text"
+                                            name="tags"
+                                            id="tags"
+                                            value={tags}
+                                            onChange={(e) => setTags(e.target.value)}
+                                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+                                            placeholder="Comma-separated tags, e.g., tech, music"
+                                            required
+                                        />
+                                    </div>
+                                    <div className="col-span-2">
                                         <label htmlFor="description" className="block mb-2 text-sm font-medium text-gray-900">Description</label>
                                         <textarea
                                             id="description"
@@ -148,7 +171,7 @@ function UploadVideo() {
                                     type="submit"
                                     className="text-white inline-flex items-center bg-gray-700 hover:bg-gray-900 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
                                 >
-                                    <HiPlus size={20} color="currentColor" className='mr-2' />
+                                    <HiPlus size={20} color="currentColor" className="mr-2" />
                                     Upload Video
                                 </button>
                             </form>
@@ -156,6 +179,8 @@ function UploadVideo() {
                     </div>
                 )}
             </>
+        )
     );
 }
+
 export default UploadVideo;
