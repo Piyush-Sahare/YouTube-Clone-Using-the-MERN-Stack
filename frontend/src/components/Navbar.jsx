@@ -64,19 +64,19 @@ function Navbar({ openChange,onSearch }) {
 
   return (
     <>
-      <nav className="fixed z-30 w-full bg-white border-b border-gray-200">
-        <div className="px-3 py-3 lg:px-5 lg:pl-3">
+      <nav className="fixed z-30 w-full border-none bg-white border-b border-gray-200">
+        <div className="px-1 py-1 lg:px-5 lg:pl-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center justify-start">
               <button
                 onClick={toggleSidebar}
-                className="fixed top-1 lg:top-2 left-3 z-40 flex items-center justify-center w-10 h-10 bg-white rounded-full  hover:bg-gray-100 group"
+                className="fixed mt-2 lg:top-2 left-5 z-40 flex items-center justify-center w-6 h-6 bg-white rounded-full  hover:bg-gray-100 group"
               >
                 <FiMenu className="w-6 h-6" />
               </button>
 
-              <a className="flex ml-14 md:mr-24" href="/">
-                <img src={logo} className="mr-2.5 h-6" alt="YouTube Logo" />
+              <a className="flex mt-2 ml-14 md:mr-24" href="/">
+                <img src={logo} className="mr-2.5 h-5" alt="YouTube Logo" />
               </a>
 
               <form

@@ -104,7 +104,7 @@ function Home() {
   ) : (
     <div className="w-full ml-0 lg:mt-8 bg-white">
       {/* Render tags */}
-      <div className="relative flex items-center px-4 py-2 m-2 bg-white">
+      <div className="relative flex items-center px-4 py-2  bg-white">
         {/* Left Scroll Button */}
         {canScrollLeft && (
           <button
@@ -117,7 +117,7 @@ function Home() {
 
         {/* Tags Container */}
         <div
-          className="tags-container overflow-x-auto whitespace-nowrap scrollbar-hide px-4 py-2 m-2 bg-white flex gap-2"
+          className="tags-container overflow-x-auto whitespace-nowrap scrollbar-hide px-4   bg-white flex gap-2"
           ref={tagsContainerRef}
         >
           {tags.map((tag) => (
@@ -147,7 +147,7 @@ function Home() {
       </div>
 
       {/* Render videos */}
-      <div className="grid grid-cols-1 px-8 pt-3 xl:grid-cols-3 xl:gap-4">
+      <div className="grid grid-cols-1 px-4 pt-3 xl:grid-cols-3 xl:gap-4">
         {filteredVideos.map((video) => (
           <div key={video._id} className="bg-white rounded-lg max-w-[380px]">
             <div className="relative">

@@ -95,7 +95,7 @@ const CustomYouTubePlayer = ({ src }) => {
       {/* Video Player */}
       <video
         ref={videoRef}
-        className="w-full h-auto rounded-md"
+        className="w-full h-auto rounded-xl"
         src={src}
         onTimeUpdate={handleTimeUpdate}
         onLoadedMetadata={handleLoadedMetadata}
@@ -104,7 +104,7 @@ const CustomYouTubePlayer = ({ src }) => {
 
       {/* Controls */}
       <div
-        className={`absolute bottom-0 left-0 right-0 transition-opacity duration-300 ${isControlsVisible ? "opacity-100" : "opacity-0"
+        className={`absolute bottom-0 left-0 right-0 rounded-xl transition-opacity duration-300 ${isControlsVisible ? "opacity-100" : "opacity-0"
           } bg-black/80 p-3 flex flex-col gap-2`}
       >
         {/* Play/Pause Button */}
@@ -128,11 +128,15 @@ const CustomYouTubePlayer = ({ src }) => {
               value={currentTime}
               onChange={handleSeek}
               className="flex-grow h-1 bg-gray-500 rounded-lg appearance-none cursor-pointer accent-red-500"
+              style={{
+                background: `linear-gradient(to right, red ${(currentTime / duration) * 100}%, #e5e5e5 ${(currentTime / duration) * 100}%)`,
+              }}
             />
+
             <span className="text-xs text-white">{formatTime(duration)}</span>
           </div>
 
-        {/* Volume Control */}
+          {/* Volume Control */}
           <div className="flex items-center gap-2 m-2">
             <button
               onClick={toggleMute}

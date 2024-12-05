@@ -19,10 +19,10 @@ function Sidebar({ hidden }) {
   const hasChannel = user ? user.hasChannel : false;
 
   const navItems = [
-    { name: "Home", path: "/", icon: <FiHome />, active: true },
-    { name: "Shorts", path: "/shorts", icon: <FiPlay />, active: authStatus },
-    { name: "Sign Up", path: "/signup", icon: <FiUser />, active: !authStatus },
-    { name: "Login", path: "/login", icon: <FiLogIn />, active: !authStatus },
+    { name: "Home", path: "/", icon: <FiHome className="h-5 w-5 ml-2 mr-3" />, active: true },
+    { name: "Shorts", path: "/shorts", icon: <FiPlay className="h-5 w-5 ml-2 mr-3"/>, active: authStatus },
+    { name: "Sign Up", path: "/signup", icon: <FiUser className="h-5 w-5 ml-2 mr-3"/>, active: !authStatus },
+    { name: "Login", path: "/login", icon: <FiLogIn className="h-5 w-5 ml-2 mr-3"/>, active: !authStatus },
   ];
 
   return (
@@ -30,14 +30,14 @@ function Sidebar({ hidden }) {
       {hidden && (
         <aside
           id="sidebar"
-          className="fixed pt-5 left-0 z-30 flex flex-col flex-shrink-0 w-52 h-full bg-white border-r border-gray-200"
+          className="fixed border-none pt-5 left-0 z-30 flex flex-col flex-shrink-0 w-52 h-full bg-white border-r border-gray-200"
           aria-label="Sidebar"
           style={{
             zIndex: 20,
             position: "absolute",
           }}
         >
-          <div className="relative flex flex-col flex-1 min-h-0 pt-0">
+          <div className="relative flex flex-col flex-1 min-h-0 pt-0 ">
             <div className="flex flex-col flex-1 pt-3 pb-4 overflow-y-auto">
               <div className="flex-1 px-3 space-y-1 divide-y divide-gray-200">
                 <ul>
@@ -47,10 +47,10 @@ function Sidebar({ hidden }) {
                         <li key={index}>
                           <Link
                             to={item.path}
-                            className="flex items-center p-2 text-base text-gray-900 rounded-lg hover:bg-gray-100 group"
+                            className="flex items-center p-2 text-base text-gray-900 rounded-lg hover:bg-gray-100 group "
                           >
                             {item.icon}
-                            <span className="ml-3">{item.name}</span>
+                            <span className="ml-3 text-md">{item.name}</span>
                           </Link>
                         </li>
                       )
@@ -63,7 +63,7 @@ function Sidebar({ hidden }) {
                             to="/subscriptions"
                             className="flex items-center p-2 text-base text-gray-900 rounded-lg hover:bg-gray-100 group"
                           >
-                            <MdSubscriptions />
+                            <MdSubscriptions className="h-5 w-5 ml-2 mr-3" />
                             <span className="ml-3">Subscriptions</span>
                           </Link>
                         </li>
@@ -73,7 +73,7 @@ function Sidebar({ hidden }) {
                               to="/your_channel"
                               className="flex items-center p-2 text-base text-gray-900 rounded-lg hover:bg-gray-100 group"
                             >
-                              <FiUser />
+                              <FiUser className="h-5 w-5 ml-2 mr-3"/>
                               <span className="ml-3">Your Channel</span>
                             </Link>
                           )}
@@ -84,7 +84,7 @@ function Sidebar({ hidden }) {
                           to="/history"
                           className="flex items-center p-2 text-base text-gray-900 rounded-lg hover:bg-gray-100 group"
                         >
-                          <MdHistory />
+                          <MdHistory className="h-5 w-5 ml-2 mr-3"/>
                           <span className="ml-3">History</span>
                         </Link>
                       </li>
@@ -93,7 +93,7 @@ function Sidebar({ hidden }) {
                           to="/playlist"
                           className="flex items-center p-2 text-base text-gray-900 rounded-lg hover:bg-gray-100 group"
                         >
-                          <FiList />
+                          <FiList className="h-5 w-5 ml-2 mr-3"/>
                           <span className="ml-3">Playlist</span>
                         </Link>
                       </li>
@@ -102,7 +102,7 @@ function Sidebar({ hidden }) {
                           to="/"
                           className="flex items-center p-2 text-base text-gray-900 rounded-lg hover:bg-gray-100 group"
                         >
-                          <FiHeart />
+                          <FiHeart className="h-5 w-5 ml-2 mr-3"/>
                           <span className="ml-3">Liked</span>
                         </Link>
                       </li>
@@ -111,7 +111,7 @@ function Sidebar({ hidden }) {
                           to="/"
                           className="flex items-center p-2 text-base text-gray-900 rounded-lg hover:bg-gray-100 group"
                         >
-                          <MdExplore />
+                          <MdExplore className="h-5 w-5 ml-2 mr-3"/>
                           <span className="ml-3">Explore</span>
                         </Link>
                       </li>
@@ -120,7 +120,7 @@ function Sidebar({ hidden }) {
                           to="/"
                           className="flex items-center p-2 text-base text-gray-900 rounded-lg hover:bg-gray-100 group"
                         >
-                          <MdTrendingUp />
+                          <MdTrendingUp className="h-5 w-5 ml-2 mr-3"/>
                           <span className="ml-3">Trending</span>
                         </Link>
                       </li>
@@ -129,7 +129,7 @@ function Sidebar({ hidden }) {
                           to="/settings"
                           className="flex items-center p-2 text-base text-gray-900 rounded-lg hover:bg-gray-100 group"
                         >
-                          <FiSettings />
+                          <FiSettings className="h-5 w-5 ml-2 mr-3"/>
                           <span className="ml-3">Settings</span>
                         </Link>
                       </li>

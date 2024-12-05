@@ -56,10 +56,13 @@ function Dashboard() {
   return (
     <>
       <div className="lg:mt-8 bg-white grid grid-cols-1 px-8 pt-6 xl:grid-cols-3 xl:gap-4">
+      
         <div className="w-full ml-2 mb-4 col-span-full xl:mb-2">
+        {channelData && (
            <img className="w-full h-36 rounded-sm" src={channelData.banner} />
+          )}
           <div className="mt-4 flex items-center gap-5">
-            {channelData ? (
+          {channelData ? (
               <>
                 <img className="w-28 h-28  rounded-full" src={channelData.avatar}  />
                 <div className="font-bold dark:text-black">

@@ -113,7 +113,7 @@ const deleteVideoById = asyncHandler(async (req, res) => {
 const VideoDataById = asyncHandler(async (req, res) => {
   const { id } = req.params; // Extract the video ID from the request parameters
 
-  const video = await Video.findById(id).populate('channelId').populate('owner', '-password'); // Find the video by ID
+  const video = await Video.findById(id).populate('owner', '-password').populate('channelId'); // Find the video by ID
 
   if (!video) {
     throw new ApiError(404, "Video not found");
