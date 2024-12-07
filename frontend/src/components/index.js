@@ -3,7 +3,6 @@ import Home from "../page/Home";
 import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
 import Dashboard from "../page/Dashboard";
-import History from "../page/History";
 import Playlist from "./Playlist";
 import EditAccount from "./EditAccount";
 import Login from "../page/Login";
@@ -15,13 +14,14 @@ import UploadVideo from "./UploadVideo";
 import AllVideo from "./AllVideo";
 import AuthLayout from "../layouts/AuthLayout";
 import EditChannel from "./EditChannel";
+import Channel from "../page/Channel";
+import UpdateVideo from "./UpdateVideo";
 
 export {
     Home,
     Navbar,
     Sidebar,
     Dashboard,
-    History,
     Playlist,
     EditAccount,
     Login,
@@ -32,5 +32,7 @@ export {
     UploadVideo,
     AllVideo,
     AuthLayout,
-    EditChannel
+    EditChannel,
+    Channel,
+    UpdateVideo
 };

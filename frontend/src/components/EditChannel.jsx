@@ -21,11 +21,6 @@ function EditChannel() {
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
 
-  // useEffect(() => {
-  //   if (user?.channelId) {
-  //     dispatch(getChannel(user.channelId));
-  //   }
-  // }, [dispatch, user?.channelId]);
   
   useEffect(() => {
     if (channel) {

@@ -1,3 +1,5 @@
+//frontend/src/components/Recommendation.jsx
+
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';

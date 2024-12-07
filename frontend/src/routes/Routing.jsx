@@ -4,7 +4,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import store from '../Redux/store.js';
 import App from '../App';
-import { Home, Dashboard, History, Playlist, EditAccount,EditChannel, Signup, Login, Settings, Shorts, Video, UploadVideo, AllVideo, AuthLayout, } from '../components';
+import { Home, Dashboard, Playlist, EditAccount, EditChannel, Signup, Login, Settings, Shorts, Video, UploadVideo, AllVideo, AuthLayout, Channel,UpdateVideo } from '../components';
 
 function Routing() {
     return (
@@ -16,7 +16,7 @@ function Routing() {
 
                         <Route path='your_channel/*' element={
                             <AuthLayout>
-                                <Dashboard/>
+                                <Dashboard />
                             </AuthLayout>
                         }>
                             <Route index element={
@@ -29,11 +29,16 @@ function Routing() {
                                     <UploadVideo />
                                 </AuthLayout>
                             } />
+                             <Route path="update/:id" element={
+                                <AuthLayout>
+                                <UpdateVideo />
+                                </AuthLayout>
+                              } /> 
                         </Route>
 
                         <Route path='history' element={
                             <AuthLayout>
-                                <History />
+                                <Home />
                             </AuthLayout>
                         } />
                         <Route path='playlist' element={
@@ -41,17 +46,17 @@ function Routing() {
                                 <  Playlist />
                             </AuthLayout>
                         } />
-
-                        <Route path='subscriptions' element={
-                            <AuthLayout>
-                                <Home />
-                            </AuthLayout>
-                        } />
+                        
                         <Route path='shorts' element={
                             <AuthLayout>
                                 <Shorts />
                             </AuthLayout>
                         } />
+
+                        <Route path='Channel/:id' element={
+                                <Channel />
+                        } />
+
                         <Route path='watch/:id' element={
                             <Video />
                         } />

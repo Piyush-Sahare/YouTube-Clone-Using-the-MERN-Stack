@@ -1,5 +1,5 @@
-// //frontend/src/page/Channel.jsx
-import { useState, useEffect } from "react";
+// //frontend/src/page/Dashboard.jsx
+import {useEffect} from "react";
 import React from 'react';
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import { useSelector , useDispatch} from 'react-redux';
@@ -12,7 +12,6 @@ function Dashboard() {
   const data = useSelector((state) => state.auth.user);
   const channelData = useSelector((state) => state.channel.channel);
   //console.log("channel",channelData);
-  //const [userdata, setUserData] = useState();
   const navigate = useNavigate(); 
   const dispatch = useDispatch();
   const { toast } = useToast()
@@ -34,8 +33,8 @@ function Dashboard() {
         title: "Channel Deleted Successfully",
         description: "You will be redirected to the home page.",
       });
-      navigate("/"); // Redirect user to the home page after deletion
-      dispatch(getUserData(data._id)); //update user state
+      navigate("/"); 
+      dispatch(getUserData(data._id)); 
     } catch (error) {
       console.error("Error deleting channel:", error);
       toast({
@@ -50,9 +49,6 @@ function Dashboard() {
     const date = new Date(dateString);
     return date.toLocaleDateString(undefined, options);
   };
-
- 
-
   return (
     <>
       <div className="lg:mt-8 bg-white grid grid-cols-1 px-8 pt-6 xl:grid-cols-3 xl:gap-4">

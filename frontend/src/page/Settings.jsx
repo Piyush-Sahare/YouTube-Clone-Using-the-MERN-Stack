@@ -20,19 +20,16 @@ function Settings() {
                 setLoader(true)
                 dispatch(deleteAccount(userdata._id));
                 setLoader(false)
-                //alert("Your account is deleted !");
                 toast({
                     title: "Your account is deleted !",
                   });
                 navigate("/signup");
             } catch (error) {
                 console.log("account delete error :",error);
-                //alert(error);
                 toast({
                     variant: "destructive",
                     title: error,
                   });
-                
             }
         }  
     }

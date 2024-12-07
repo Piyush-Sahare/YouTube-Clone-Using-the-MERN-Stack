@@ -15,10 +15,10 @@ const initialState = {
 export const fetchAllVideos = createAsyncThunk('/api/v1/videos/allVideo', async (_, { rejectWithValue }) => {
   try {
     const response = await axios.get('/api/v1/videos/allVideo');
-    
+
     return response.data.data;
   } catch (error) {
-    
+
     return rejectWithValue(error.response.data.message);
   }
 });
@@ -27,10 +27,10 @@ export const fetchAllVideos = createAsyncThunk('/api/v1/videos/allVideo', async 
 export const fetchAllUserVideos = createAsyncThunk('/api/v1/videos/allUserVideo', async (ownerId, { rejectWithValue }) => {
   try {
     const response = await axios.get(`/api/v1/videos/allUserVideo/${ownerId}`);
-    
+
     return response.data.data;
   } catch (error) {
-    
+
     return rejectWithValue(error.response.data.message);
   }
 });
@@ -82,6 +82,50 @@ export const incrementView = createAsyncThunk('/api/v1/videos/incrementView', as
   }
 });
 
+export const likeVideo = createAsyncThunk(
+  'video/likeVideo',
+  async ({ videoId, userId }, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(`/api/v1/videos/like`, { videoId, userId });
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+// Remove like from a video
+export const removeLikeVideo = createAsyncThunk(
+  'video/removeLikeVideo',
+  async ({ videoId, userId }, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(`/api/v1/videos/removelike`, { videoId, userId });
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const updateVideo = createAsyncThunk(
+  '/api/v1/videos/update',
+  async ({ id, formData }, { rejectWithValue }) => {
+    try {
+      const response = await axios.put(`/api/v1/videos/update/${id}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data', 
+        },
+      });
+      //console.log(response.data);
+      return response.data.video; 
+
+    } catch (error) {
+      return rejectWithValue(error.response.data.message);
+    }
+  }
+);
+
+
 const videoSlice = createSlice({
   name: 'videos',
   initialState,
@@ -96,6 +140,7 @@ const videoSlice = createSlice({
       .addCase(fetchAllVideos.pending, (state) => {
         state.loading = true;
         state.error = null;
+        
       })
       .addCase(fetchAllVideos.fulfilled, (state, action) => {
         state.loading = false;
@@ -115,7 +160,6 @@ const videoSlice = createSlice({
       .addCase(fetchAllUserVideos.fulfilled, (state, action) => {
         state.loading = false;
         state.userVideos = action.payload
-        //console.log('Redux State User Videos:', state.userVideos);
       })
       .addCase(fetchAllUserVideos.rejected, (state, action) => {
         state.loading = false;
@@ -182,7 +226,52 @@ const videoSlice = createSlice({
       .addCase(incrementView.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+      })
+      // Like a video
+      .addCase(likeVideo.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(likeVideo.fulfilled, (state, action) => {
+        state.loading = false;
+        state.likesCount += 1;
+        if (state.video) {
+          state.video.likes.push(action.payload.userId);
+        }
+      })
+      .addCase(likeVideo.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      // Remove like from a video
+      .addCase(removeLikeVideo.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(removeLikeVideo.fulfilled, (state, action) => {
+        state.loading = false;
+        state.likesCount -= 1;
+        if (state.video) {
+          state.video.likes = state.video.likes.filter((id) => id !== action.payload.userId);
+        }
+      })
+      .addCase(removeLikeVideo.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(updateVideo.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateVideo.fulfilled, (state, action) => {
+        state.loading = false;
+        state.video = action.payload;
+
+      })
+      .addCase(updateVideo.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
       });
+
   },
 });
 

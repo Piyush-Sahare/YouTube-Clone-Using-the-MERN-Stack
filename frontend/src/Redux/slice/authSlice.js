@@ -9,7 +9,6 @@ const initialState = {
     accessToken: null,
     status: false,
     hasChannel: false,
-    watchHistory: []  // New field to store the user's watch history
 };
 
 // Register User
@@ -82,31 +81,7 @@ export const updateAccount = createAsyncThunk(
     }
 );
 
-// Get User Watch History
-export const getWatchHistory = createAsyncThunk(
-    '/api/v1/account/getWatchHistory',
-    async (_, { rejectWithValue }) => {
-        try {
-            const response = await axios.get(`/api/v1/account/history`);
-            return response.data.data; // Return watch history from the backend
-        } catch (error) {
-            return rejectWithValue(error.response.data.message); // Return error message
-        }
-    }
-);
 
-// Add Video to Watch History
-export const addToWatchHistory = createAsyncThunk(
-    '/api/v1/account/addToWatchHistory',
-    async (videoId, { rejectWithValue }) => {
-        try {
-            const response = await axios.put(`/api/v1/account/addToHistory/${videoId}`);
-            return response.data.message; // Return success message from backend
-        } catch (error) {
-            return rejectWithValue(error.response.data.message); // Return error message
-        }
-    }
-);
 
 const authSlice = createSlice({
     name: 'auth',
@@ -150,12 +125,10 @@ const authSlice = createSlice({
 
             // Handle logout actions
             .addCase(logout.fulfilled, (state) => {
-                return {
-                    ...state,
-                    status: false,
-                    user: null,  // Clear user data on logout
-                    accessToken: null,
-                };
+                    state.status = false;
+                    state.user = null;  
+                    state.accessToken = null;
+                
             })
             .addCase(logout.rejected, (state, action) => {
                 state.error = action.payload;
@@ -204,35 +177,6 @@ const authSlice = createSlice({
                 state.loading = false;
                 state.error = action.payload; // Set error state
             })
-
-            // Handle getWatchHistory actions
-            .addCase(getWatchHistory.pending, (state) => {
-                state.loading = true;
-                state.error = null;
-            })
-            .addCase(getWatchHistory.fulfilled, (state, action) => {
-                state.loading = false;
-                state.watchHistory = action.payload; // Save watch history data
-            })
-            .addCase(getWatchHistory.rejected, (state, action) => {
-                state.loading = false;
-                state.error = action.payload; // Set error state
-            })
-
-            // Handle addToWatchHistory actions
-            .addCase(addToWatchHistory.pending, (state) => {
-                state.loading = true;
-                state.error = null;
-            })
-            .addCase(addToWatchHistory.fulfilled, (state, action) => {
-                state.loading = false;
-                // Add new video to watch history
-                state.watchHistory.push(action.payload); 
-            })
-            .addCase(addToWatchHistory.rejected, (state, action) => {
-                state.loading = false;
-                state.error = action.payload; // Set error state
-            });
     },
 });
 

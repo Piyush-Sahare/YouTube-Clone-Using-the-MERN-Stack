@@ -32,7 +32,6 @@ function Signup() {
             setFormData({ name: '', email: '', password: '' });
             setError('');
             setLoader(false);
-            //alert("SignUp Successfully .")
             toast({
                 title: "SignUp Successfully",
               });

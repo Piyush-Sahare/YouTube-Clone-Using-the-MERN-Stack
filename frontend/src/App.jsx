@@ -13,15 +13,12 @@ function App() {
   };
 
   useEffect(() => {
-    // Close the sidebar when on a video page
     if (isVideoPage) {
       setIsOpen(false);
     } else if (window.innerWidth >= 769) {
-      // Reset to default state based on window size if not on a video page
       setIsOpen(true);
     }
 
-    // Listen for window resize events and adjust the sidebar visibility
     const handleResize = () => {
       if (window.innerWidth < 769) {
         setIsOpen(false);
@@ -31,7 +28,7 @@ function App() {
     };
 
     window.addEventListener("resize", handleResize);
-    handleResize(); // Call immediately to set the correct sidebar state based on window size
+    handleResize(); 
 
     return () => {
       window.removeEventListener("resize", handleResize);
@@ -40,7 +37,6 @@ function App() {
 
   return (
     <>
-      {/* <Navbar openChange={() => setIsOpen((prev) => !prev)} /> */}
       <Navbar openChange={() => setIsOpen((prev) => !prev)} onSearch={handleSearch} />
       <div
         className={`flex pt-8 overflow-hidden bg-white ${

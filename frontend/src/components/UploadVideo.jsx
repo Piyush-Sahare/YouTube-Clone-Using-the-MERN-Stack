@@ -1,5 +1,5 @@
 // //frontend/src/components/Uploadvideo.jsx
-import { Link, useNavigate } from 'react-router-dom';
+import {useNavigate } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
 import { FiX } from 'react-icons/fi';
 import { HiPlus } from 'react-icons/hi';
@@ -14,7 +14,7 @@ function UploadVideo() {
     const [description, setDescription] = useState("");
     const [thumbnail, setThumbnail] = useState(null);
     const [videoFile, setVideoFile] = useState(null);
-    const [tags, setTags] = useState(""); // New state for tags
+    const [tags, setTags] = useState(""); 
     const [loader, setLoader] = useState(false);
     const dispatch = useDispatch();
     const location = useLocation();
@@ -47,7 +47,7 @@ function UploadVideo() {
         formData.append('description', description);
         formData.append('thumbnail', thumbnail);
         formData.append('videoFile', videoFile);
-        formData.append('tags', tags); // Add tags to formData
+        formData.append('tags', tags); 
 
         try {
             setLoader(true);

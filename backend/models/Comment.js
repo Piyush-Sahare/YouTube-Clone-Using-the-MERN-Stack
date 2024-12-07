@@ -1,7 +1,7 @@
 // backend/models/Comment.js
-import mongoose from 'mongoose';
+import mongoose, {Schema} from "mongoose";
 
-const commentSchema = new mongoose.Schema(
+const commentSchema = new Schema(
   {
     text: { type: String, required: true },
     userName: { type: String, required: true },
@@ -12,5 +12,5 @@ const commentSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const Comment = mongoose.model('Comment', commentSchema);
-export default Comment;
+
+export const Comment = mongoose.model("Comment" , commentSchema)

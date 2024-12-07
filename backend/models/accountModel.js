@@ -34,12 +34,19 @@ const userSignUp = new Schema(
             type: Schema.Types.ObjectId,
             ref: "channel"
         },
-        watchHistory: [
+       
+        subscriptions: [
             {
-                type: Schema.Types.ObjectId,
-                ref: "video"
+                type:Schema.Types.ObjectId,
+                ref: "channel"
             }
         ],
+        likes: [
+            {
+                type: Schema.Types.ObjectId,
+                ref: "Video"
+            }
+        ]
     },
     {
         timestamps: true

@@ -16,7 +16,6 @@ const CreateChannel = ({ isOpen, onClose }) => {
   const [loading, setLoading] = useState(false);
   const userId = useSelector((state) => state.auth.user._id);
 
-
   // Handle input changes
   const handleInputChange = (e) => {
     const { name, value } = e.target;

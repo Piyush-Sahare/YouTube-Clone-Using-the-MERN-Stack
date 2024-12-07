@@ -1,6 +1,5 @@
 // backend/models/tagsModel.js
 import mongoose, { Schema } from "mongoose";
-
 const tagSchema = new Schema(
     {
         name: {

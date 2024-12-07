@@ -1,9 +1,8 @@
 // frontend/src/Redux/slice/commentsSlice.js
-
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
-// Async Thunks for fetching, adding, updating, and deleting comments
+
 export const fetchCommentsByVideoId = createAsyncThunk(
   'comments/fetchCommentsByVideoId',
   async (videoId) => {

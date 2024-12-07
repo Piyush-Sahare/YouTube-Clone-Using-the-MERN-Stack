@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { getUserData, updateAccount, } from '../Redux/slice/authSlice'; // Import the actions
+import { getUserData, updateAccount, } from '../Redux/slice/authSlice'; 
 import { useToast } from "../hooks/use-toast"
 
 function CustomizeAccount() {
@@ -20,7 +20,7 @@ function CustomizeAccount() {
 
   useEffect(() => {
     if (data._id) {
-      dispatch(getUserData(data._id)); // Dispatch the action to fetch user data
+      dispatch(getUserData(data._id)); 
     }
   }, [data._id, dispatch]);
 
@@ -51,20 +51,18 @@ function CustomizeAccount() {
 
     try {
       setLoader(true);
-      dispatch(updateAccount({ userId: userdata._id, formData })); // Dispatch the updateAccount action
+      dispatch(updateAccount({ userId: userdata._id, formData })); 
       setLoader(false);
-      //alert('Account Updated Successfully');
       toast({
         title: "Account Updated Successfully",
       });
-      navigate('/your_channel');
+      navigate('/settings');
     } catch (error) {
       setLoader(false);
       console.log('Update Account error', error);
-      //alert('Something went wrong!');
       toast({
         variant: "destructive",
-        title: "Account Updated Successfully",
+        title: "Something went wrong!",
       });
     }
   };

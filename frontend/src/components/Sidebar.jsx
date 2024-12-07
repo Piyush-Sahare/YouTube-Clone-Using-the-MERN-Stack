@@ -1,4 +1,4 @@
-// //  //frontend/src/components/Sidebar.jsx
+//frontend/src/components/Sidebar.jsx
 import React from "react";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -60,7 +60,7 @@ function Sidebar({ hidden }) {
                       <div className="divide-y divide-gray-200">
                         <li>
                           <Link
-                            to="/subscriptions"
+                            to="/"
                             className="flex items-center p-2 text-base text-gray-900 rounded-lg hover:bg-gray-100 group"
                           >
                             <MdSubscriptions className="h-5 w-5 ml-2 mr-3" />

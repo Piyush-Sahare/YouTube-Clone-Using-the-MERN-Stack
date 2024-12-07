@@ -6,14 +6,14 @@ import {
   deleteComment,
   updateComment,
 } from '../controllers/commentsController.js';
-import {verifyJWT} from "../middlewares/authMiddleware.js"
+import { verifyJWT } from "../middlewares/authMiddleware.js"
 
 const router = express.Router();
 
 // Routes for comments
-router.get('/video/:videoId', getCommentsByVideoId);
-router.post('/video/:videoId',verifyJWT, addComment);
-router.delete('/:commentId',verifyJWT, deleteComment);
-router.put('/:commentId',verifyJWT, updateComment);
+router.route("/video/:videoId").get(getCommentsByVideoId);
+router.route("/video/:videoId").post(verifyJWT, addComment);
+router.route("/:commentId").delete(verifyJWT, deleteComment);
+router.route("/:commentId").put(verifyJWT, updateComment);
 
 export default router;

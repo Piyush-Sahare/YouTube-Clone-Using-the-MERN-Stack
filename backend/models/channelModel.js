@@ -29,6 +29,18 @@ const channelSchema = new Schema(
       ref: "newUser",
       required: true,
     },
+    subscribers: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "newUser"
+      }
+    ],
+    videos: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Video"
+      }
+    ]
   },
   {
     timestamps: true,

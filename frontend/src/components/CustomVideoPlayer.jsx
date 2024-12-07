@@ -7,7 +7,6 @@ import {
   FaVolumeMute,
   FaExpand,
   FaCompress,
-  FaCog,
 } from "react-icons/fa";
 
 const CustomYouTubePlayer = ({ src }) => {

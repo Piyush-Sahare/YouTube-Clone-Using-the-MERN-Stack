@@ -23,7 +23,6 @@ const  videoSchema = new Schema(
         duration:{
             type: Number,
             default: 0,
-            // required: true
         },
         views:{
             type:Number,
@@ -43,6 +42,12 @@ const  videoSchema = new Schema(
                 type: String,
             },
         ],
+        likes: [
+            {
+                type: Schema.Types.ObjectId,
+                ref: "newUser"
+            }
+        ]
 
     },
     {

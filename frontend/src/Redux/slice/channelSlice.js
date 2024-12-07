@@ -4,10 +4,10 @@ import axios from "axios";
 
 // Initial state for the channel slice
 const initialState = {
-    channel: null,        // Stores channel data
-    loading: false,       // Tracks the loading state
-    error: null,          // Stores error messages
-    successMessage: null, // Success messages for operations
+    channel: null,       
+    loading: false,       
+    error: null,          
+    successMessage: null, 
 };
 
 // **Async actions**
@@ -77,6 +77,38 @@ export const deleteChannel = createAsyncThunk(
     }
 );
 
+export const subscribeChannel = createAsyncThunk(
+    "channel/subscribe",
+    async (channelId, { rejectWithValue }) => {
+        try {
+            const response = await axios.post(`/api/v1/channel/subscribe/${channelId}`, {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+                },
+            });
+            return response.data.message;
+        } catch (error) {
+            return rejectWithValue(error.response?.data?.error || "Failed to subscribe channel");
+        }
+    }
+);
+
+export const unsubscribeChannel = createAsyncThunk(
+    "channel/unsubscribe",
+    async (channelId, { rejectWithValue }) => {
+        try {
+            const response = await axios.post(`/api/v1/channel/unsubscribe/${channelId}`, {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+                },
+            });
+            return response.data.message;
+        } catch (error) {
+            return rejectWithValue(error.response?.data?.error || "Failed to unsubscribe channel");
+        }
+    }
+);
+
 // **Slice definition**
 const channelSlice = createSlice({
     name: "channel",
@@ -107,28 +139,23 @@ const channelSlice = createSlice({
             .addCase(createChannel.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
-            });
+            })
 
-        // Handle getChannel actions
-        builder
             .addCase(getChannel.pending, (state) => {
                 state.loading = true;
                 state.error = null;
             })
             .addCase(getChannel.fulfilled, (state, action) => {
                 state.loading = false;
-                state.channel = action.payload; 
+                state.channel = action.payload;
                 //console.log("Channel state updated:", state.channel); // Debugging log
             })
             .addCase(getChannel.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
                 console.error("Error fetching channel:", action.payload); // Debugging log
-            });
+            })
 
-
-        // Handle updateChannel actions
-        builder
             .addCase(updateChannel.pending, (state) => {
                 state.loading = true;
                 state.error = null;
@@ -142,10 +169,8 @@ const channelSlice = createSlice({
             .addCase(updateChannel.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
-            });
+            })
 
-        // Handle deleteChannel actions
-        builder
             .addCase(deleteChannel.pending, (state) => {
                 state.loading = true;
                 state.error = null;
@@ -158,12 +183,27 @@ const channelSlice = createSlice({
             .addCase(deleteChannel.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
+            })
+
+            .addCase(subscribeChannel.fulfilled, (state, action) => {
+                state.loading = false;
+            })
+            .addCase(subscribeChannel.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+            })
+
+            .addCase(unsubscribeChannel.fulfilled, (state, action) => {
+                state.loading = false;
+            })
+            .addCase(unsubscribeChannel.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
             });
     },
 });
 
-// Export the actions for use in components
+
 export const { clearError, clearSuccessMessage } = channelSlice.actions;
 
-// Export the reducer for the store
 export default channelSlice.reducer;

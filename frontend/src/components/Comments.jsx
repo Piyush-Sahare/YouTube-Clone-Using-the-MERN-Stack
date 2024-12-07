@@ -9,8 +9,8 @@ const Comment = ({ comment, videoId }) => {
   const [newComment, setNewComment] = useState(comment.text);
   const [menuVisible, setMenuVisible] = useState(false);
   const dispatch = useDispatch();
-  
-  // Get the logged-in user from the store (assuming the current user is stored in state.auth.user)
+
+
   const currentUser = useSelector((state) => state.auth.user);
 
   const handleEdit = () => {
@@ -107,7 +107,9 @@ const Comments = ({ videoId }) => {
           placeholder="Add a comment..."
           className="border rounded w-full p-2"
         />
-        <button type="submit" className="mt-2 bg-blue-500 text-white p-2 rounded">Submit</button>
+        <div className="mt-2 text-right">
+          <button type="submit" className="bg-black text-white p-2 px-5 rounded-full">Submit</button>
+        </div>
       </form>
       {comments.map((comment) => (
         <Comment key={comment._id} comment={comment} videoId={videoId} />

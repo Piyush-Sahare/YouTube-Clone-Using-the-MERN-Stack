@@ -8,8 +8,9 @@ import {
 
 const router = express.Router();
 
-router.post("/createTags", createTag);
-router.get("/getTags", getAllTags);
-router.delete("/deleteTags/:id", deleteTag);
+
+router.route("/createTags").post(createTag);
+router.route("/:commentId").get(getAllTags);
+router.route("/deleteTags/:id").delete(deleteTag);
 
 export default router;

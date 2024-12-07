@@ -2,26 +2,25 @@
 import { useState, useEffect } from 'react';
 import React from 'react';
 import logo from '../assets/YouTube_Logo_2017.svg.png';
-import { Link,useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { logout } from '../Redux/slice/authSlice';
 import { useDispatch, useSelector } from "react-redux";
-import { getUserData } from '../Redux/slice/authSlice'; // Import getUserData action
+import { getUserData } from '../Redux/slice/authSlice';
 import { FiSearch, FiMenu } from "react-icons/fi";
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
 import CreateChannel from './CreateChannel';
 import { useToast } from "../hooks/use-toast";
 import { RiVideoUploadLine } from "react-icons/ri";
-function Navbar({ openChange,onSearch }) {
+function Navbar({ openChange, onSearch }) {
   const [dropdownVisible, setDropdownVisible] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false); // Modal visibility state
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const dispatch = useDispatch();
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
   const authStatus = useSelector((state) => state.auth.status);
-  const userdata = useSelector((state) => state.auth.user); // Access user data from Redux store
+  const userdata = useSelector((state) => state.auth.user);
   const { toast } = useToast()
   const [searchTerm, setSearchTerm] = useState("");
   const toggleSidebar = () => {
-    console.log("Sidebar toggle triggered");
     openChange();
   };
 
@@ -30,17 +29,17 @@ function Navbar({ openChange,onSearch }) {
   };
 
   const openModal = () => {
-    setIsModalOpen(true); // Open the modal
+    setIsModalOpen(true);
   };
 
   const closeModal = () => {
-    setIsModalOpen(false); // Close the modal
+    setIsModalOpen(false);
   };
 
   const handleSearchChange = (e) => {
     const value = e.target.value;
-    setSearchTerm(value); // Update search term
-    onSearch(value); // Pass the search term to the parent
+    setSearchTerm(value);
+    onSearch(value);
   };
 
   const handleUploadClick = () => {
@@ -60,7 +59,7 @@ function Navbar({ openChange,onSearch }) {
     if (userdata?._id) {
       dispatch(getUserData(userdata._id));
     }
-  }, [userdata, dispatch]); // The effect will re-run when userdata changes
+  }, [userdata, dispatch]);
 
   return (
     <>
@@ -97,8 +96,8 @@ function Navbar({ openChange,onSearch }) {
                     style={{ height: 34 }}
                     name="search"
                     id="topbar-search"
-                    value={searchTerm} // Controlled input
-                    onChange={handleSearchChange} // Handle search change
+                    value={searchTerm}
+                    onChange={handleSearchChange} e
                     className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2.5"
                     placeholder="Search"
                   />
@@ -112,12 +111,12 @@ function Navbar({ openChange,onSearch }) {
                 <div className="flex items-center space-x-3"> {/* Flex container to align icon and avatar */}
                   {/* Conditional rendering for upload icon */}
                   {userdata?.hasChannel && (
-                     <button
-                     onClick={handleUploadClick} // Handle button click
-                     className="flex items-center"
-                   >
-                     <RiVideoUploadLine className="w-6 h-6 text-gray-700 mr-5" />
-                   </button>
+                    <button
+                      onClick={handleUploadClick} // Handle button click
+                      className="flex items-center"
+                    >
+                      <RiVideoUploadLine className="w-6 h-6 text-gray-700 mr-5" />
+                    </button>
                   )}
                   <button
                     type="button"
