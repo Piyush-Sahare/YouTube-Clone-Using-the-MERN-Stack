@@ -13,10 +13,10 @@ const videoUpload = upload.fields([
 
 router.route("/allVideo").get(getAllVideos)
 router.route("/videoData/:id").get(VideoDataById)
+router.route("/allUserVideo/:owner").get(getAllUserVideos)
 
 router.use(verifyJWT);
 router.route("/publish").post(videoUpload, publishAVideo)
-router.route("/allUserVideo/:owner").get(getAllUserVideos)
 router.route("/delete/:id").delete(deleteVideoById)
 router.route("/incrementView/:id").put(viewsIncrement)
 router.route('/like').post(likeVideo);

@@ -111,10 +111,11 @@ const CustomYouTubePlayer = ({ src }) => {
         onLoadedMetadata={handleLoadedMetadata}
       ></video>
 
-    {/* Skip/Speed Boost Text */}
-    {(skipText || isSpeedBoosted) && (
+      {/* Skip/Speed Boost Text */}
+      {(skipText || isSpeedBoosted) && (
         <div className="absolute top-1/2 left-1/2 flex items-center gap-2 text-white text-2xl font-bold transform -translate-x-1/2 -translate-y-1/2">
           {isSpeedBoosted && <FastForwardIcon fontSize="large" />}
+          <span>{skipText}</span>
         </div>
       )}
 
