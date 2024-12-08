@@ -3,176 +3,172 @@ import React, { useRef, useState, useEffect } from "react";
 import {
   FaPlay,
   FaPause,
-  FaVolumeUp,
-  FaVolumeMute,
   FaExpand,
   FaCompress,
+  FaVolumeUp,
+  FaVolumeMute,
 } from "react-icons/fa";
+import Replay10Icon from "@mui/icons-material/Replay10";
+import Forward10Icon from "@mui/icons-material/Forward10";
+import FastForwardIcon from "@mui/icons-material/FastForward";
 
-// Custom video player component
 const CustomYouTubePlayer = ({ src }) => {
-  // Refs and state variables
-  const videoRef = useRef(null);  // Reference to the video element
-  const [isPlaying, setIsPlaying] = useState(true);  
-  const [isMuted, setIsMuted] = useState(false); 
-  const [volume, setVolume] = useState(1);  
-  const [currentTime, setCurrentTime] = useState(0);  
-  const [duration, setDuration] = useState(0);  
-  const [isFullscreen, setIsFullscreen] = useState(false);  
-  const [playbackRate, setPlaybackRate] = useState(1);  
-  const [isControlsVisible, setIsControlsVisible] = useState(true);  
+  const videoRef = useRef(null);
+  const [isPlaying, setIsPlaying] = useState(true);
+  const [isMuted, setIsMuted] = useState(false);
+  const [volume, setVolume] = useState(1);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [skipText, setSkipText] = useState("");
+  const [isSpeedBoosted, setIsSpeedBoosted] = useState(false);
 
-  // Sync playback rate with the video element
+  // Autoplay video on mount
   useEffect(() => {
     if (videoRef.current) {
-      videoRef.current.playbackRate = playbackRate;
+      videoRef.current.play();
     }
-  }, [playbackRate]); // Runs when playbackRate is changed
+  }, []);
 
-  // Toggle play/pause functionality
+  // Toggle Play/Pause
   const togglePlayPause = () => {
-    if (isPlaying) {
-      videoRef.current.pause();  // Pause video
-    } else {
-      videoRef.current.play();  // Play video
-    }
-    setIsPlaying(!isPlaying);  // Toggle playing state
+    if (isPlaying) videoRef.current.pause();
+    else videoRef.current.play();
+    setIsPlaying(!isPlaying);
   };
 
-  // Toggle mute/unmute functionality
+  // Handle Mute/Unmute
   const toggleMute = () => {
-    videoRef.current.muted = !isMuted;  // Mute or unmute the video
-    setIsMuted(!isMuted);  // Toggle mute state
+    videoRef.current.muted = !isMuted;
+    setIsMuted(!isMuted);
   };
 
-  // Handle volume change through the slider
+  // Volume Change
   const handleVolumeChange = (e) => {
-    const newVolume = parseFloat(e.target.value);  
-    videoRef.current.volume = newVolume;  
-    setVolume(newVolume); 
-    setIsMuted(newVolume === 0);  
+    const newVolume = parseFloat(e.target.value);
+    videoRef.current.volume = newVolume;
+    setVolume(newVolume);
+    setIsMuted(newVolume === 0);
   };
 
-  // Handle time update to update currentTime state
-  const handleTimeUpdate = () => {
-    setCurrentTime(videoRef.current.currentTime);  
-  };
+  // Update current time
+  const handleTimeUpdate = () => setCurrentTime(videoRef.current.currentTime);
+  const handleLoadedMetadata = () => setDuration(videoRef.current.duration);
 
-  // Set the video's duration when metadata is loaded
-  const handleLoadedMetadata = () => {
-    setDuration(videoRef.current.duration);  
-  };
-
-  // Seek video when user interacts with the progress bar
+  // Seek video
   const handleSeek = (e) => {
-    const newTime = parseFloat(e.target.value);  
-    videoRef.current.currentTime = newTime;  
-    setCurrentTime(newTime);  
+    const newTime = parseFloat(e.target.value);
+    videoRef.current.currentTime = newTime;
+    setCurrentTime(newTime);
   };
 
-  // Toggle fullscreen mode
+  // Skip Forward/Backward
+  const skip = (seconds) => {
+    videoRef.current.currentTime += seconds;
+    setSkipText(`${seconds > 0 ? "+10" : "-10"}`);
+    setTimeout(() => setSkipText(""), 1000);
+  };
+
+  // Fullscreen Toggle
   const toggleFullscreen = () => {
-    if (!isFullscreen) {
-      if (videoRef.current.requestFullscreen) {
-        videoRef.current.requestFullscreen();  
-      }
-    } else {
-      if (document.exitFullscreen) {
-        document.exitFullscreen();  
-      }
-    }
-    setIsFullscreen(!isFullscreen);  
+    if (!isFullscreen) videoRef.current.requestFullscreen?.();
+    else document.exitFullscreen?.();
+    setIsFullscreen(!isFullscreen);
   };
 
-  // Format time 
+  // Boost Speed on Hold
+  const handleMouseDown = () => {
+    videoRef.current.playbackRate = 2.0;
+    setIsSpeedBoosted(true);
+  };
+
+  const handleMouseUp = () => {
+    videoRef.current.playbackRate = 1.0;
+    setIsSpeedBoosted(false);
+  };
+
+  // Format Time Helper
   const formatTime = (time) => {
     const minutes = Math.floor(time / 60);
     const seconds = Math.floor(time % 60);
-    return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;  
-  };
-
-  // Show the controls when mouse moves or clicks
-  const showControls = () => {
-    setIsControlsVisible(true);  
+    return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
   };
 
   return (
     <div
-      className="relative w-full max-w-screen-lg mx-auto overflow-hidden"
-      onMouseMove={showControls}  
-      onClick={showControls}  
+      className="relative w-full max-w-4xl mx-auto bg-black rounded-lg overflow-hidden"
+      onMouseDown={handleMouseDown}
+      onMouseUp={handleMouseUp}
+      onMouseLeave={handleMouseUp}
     >
-      {/* Video Player */}
+      {/* Video */}
       <video
         ref={videoRef}
-        className="w-full h-auto rounded-xl"
-        src={src}  // Video source passed as prop
-        onTimeUpdate={handleTimeUpdate}  // Handle time updates during playback
-        onLoadedMetadata={handleLoadedMetadata}  // Set video duration on metadata load
-        autoPlay  // Automatically play the video on load
+        src={src}
+        autoPlay
+        className="w-full rounded-lg"
+        onTimeUpdate={handleTimeUpdate}
+        onLoadedMetadata={handleLoadedMetadata}
       ></video>
 
+    {/* Skip/Speed Boost Text */}
+    {(skipText || isSpeedBoosted) && (
+        <div className="absolute top-1/2 left-1/2 flex items-center gap-2 text-white text-2xl font-bold transform -translate-x-1/2 -translate-y-1/2">
+          {isSpeedBoosted && <FastForwardIcon fontSize="large" />}
+        </div>
+      )}
+
       {/* Controls */}
-      <div
-        className={`absolute bottom-0 left-0 right-0 rounded-xl transition-opacity duration-300 ${isControlsVisible ? "opacity-100" : "opacity-0"
-          } bg-black/80 p-3 flex flex-col gap-2`}
-      >
-        {/* Play/Pause Button */}
-        <div className="flex items-center justify-between">
-          <button
-            onClick={togglePlayPause}  // Toggle play/pause on click
-            className="text-white hover:text-red-500"
-          >
-            {isPlaying ? <FaPause size={24} /> : <FaPlay size={24} />}  {/* Display Play or Pause icon */}
+      <div className="absolute bottom-0 w-full p-3 bg-black/70 rounded-b-lg">
+        <div className="flex items-center justify-between gap-4">
+          {/* Play/Pause */}
+          <button onClick={togglePlayPause} className="text-white">
+            {isPlaying ? <FaPause size={20} /> : <FaPlay size={20} />}
+          </button>
+
+          {/* Skip Backward */}
+          <button onClick={() => skip(-10)} className="text-white">
+            <Replay10Icon fontSize="medium" />
+          </button>
+
+          {/* Skip Forward */}
+          <button onClick={() => skip(10)} className="text-white">
+            <Forward10Icon fontSize="medium" />
           </button>
 
           {/* Progress Bar */}
-          <div className="flex items-center gap-2 w-full px-2">
-            <span className="text-xs text-white">
-              {formatTime(currentTime)}  {/* Display current time */}
-            </span>
+          <div className="flex items-center gap-2 flex-grow">
+            <span className="text-white text-sm">{formatTime(currentTime)}</span>
             <input
               type="range"
               min="0"
-              max={duration || 0}  
-              value={currentTime}  
-              onChange={handleSeek}  
-              className="flex-grow h-1 bg-gray-500 rounded-lg appearance-none cursor-pointer accent-red-500"
-              style={{
-                background: `linear-gradient(to right, red ${(currentTime / duration) * 100}%, #e5e5e5 ${(currentTime / duration) * 100}%)`,  // Style progress bar based on current time
-              }}
+              max={duration || 0}
+              value={currentTime}
+              onChange={handleSeek}
+              className="flex-grow h-1 rounded-lg accent-red-500"
             />
-            <span className="text-xs text-white">{formatTime(duration)}</span>  {/* Display video duration */}
+            <span className="text-white text-sm">{formatTime(duration)}</span>
           </div>
 
-          {/* Volume Control */}
-          <div className="flex items-center gap-2 m-2">
-            <button
-              onClick={toggleMute}  // Toggle mute/unmute on click
-              className="text-white hover:text-red-500"
-            >
-              {isMuted ? <FaVolumeMute size={20} /> : <FaVolumeUp size={20} />}  {/* Display mute or volume icon */}
+          {/* Volume */}
+          <div className="flex items-center">
+            <button onClick={toggleMute} className="text-white mr-2">
+              {isMuted ? <FaVolumeMute size={20} /> : <FaVolumeUp size={20} />}
             </button>
             <input
               type="range"
               min="0"
               max="1"
               step="0.1"
-              value={volume}  
-              onChange={handleVolumeChange}  
-              className="h-1 w-20 bg-gray-500 rounded-lg appearance-none cursor-pointer accent-red-500"
-              style={{
-                background: `linear-gradient(to right, red ${volume * 100}%, #e5e5e5 ${volume * 100}%)`  // Style volume slider
-              }}
+              value={volume}
+              onChange={handleVolumeChange}
+              className="w-24 h-1 rounded-lg accent-red-500"
             />
           </div>
 
-          {/* Fullscreen Toggle */}
-          <button
-            onClick={toggleFullscreen}  // Toggle fullscreen mode on click
-            className="text-white hover:text-red-500"
-          >
-            {isFullscreen ? <FaCompress size={20} /> : <FaExpand size={20} />}  
+          {/* Fullscreen */}
+          <button onClick={toggleFullscreen} className="text-white">
+            {isFullscreen ? <FaCompress size={20} /> : <FaExpand size={20} />}
           </button>
         </div>
       </div>
