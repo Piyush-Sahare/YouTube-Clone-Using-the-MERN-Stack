@@ -4,10 +4,13 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import store from '../Redux/store.js';
 import App from '../App';
+// Importing components for different routes
 import { Home, Dashboard, Playlist, EditAccount, EditChannel, Signup, Login, Settings, Shorts, Video, UploadVideo, AllVideo, AuthLayout, Channel,UpdateVideo } from '../components';
 
+// Routing Component
 function Routing() {
     return (
+        // Wrapping the app with the Redux store provider to provide global state management
         <Provider store={store}>
             <BrowserRouter>
                 <Routes>

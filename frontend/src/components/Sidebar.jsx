@@ -1,32 +1,33 @@
 //frontend/src/components/Sidebar.jsx
-import React from "react";
-import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
-import {
-  FiHome,
-  FiPlay,
-  FiUser,
-  FiLogIn,
-  FiList,
-  FiHeart,
-  FiSettings,
-} from "react-icons/fi";
-import { MdSubscriptions, MdExplore, MdTrendingUp, MdHistory } from "react-icons/md";
+// Importing necessary dependencies and icons
+import React from "react"; 
+import { Link } from "react-router-dom"; 
+import { useSelector } from "react-redux"; 
+import { 
+  FiHome, FiPlay, FiUser, FiLogIn, FiList, FiHeart, FiSettings 
+} from "react-icons/fi"; 
+import { 
+  MdSubscriptions, MdExplore, MdTrendingUp, MdHistory 
+} from "react-icons/md"; 
 
 function Sidebar({ hidden }) {
+  // Fetch authentication status and user data from Redux store
   const authStatus = useSelector((state) => state.auth.status);
   const user = useSelector((state) => state.auth.user);
-  const hasChannel = user ? user.hasChannel : false;
+  const hasChannel = user ? user.hasChannel : false; // Check if the user has a channel
 
+  // Define the sidebar navigation items
   const navItems = [
+    // Default navigation items visible to everyone
     { name: "Home", path: "/", icon: <FiHome className="h-5 w-5 ml-2 mr-3" />, active: true },
-    { name: "Shorts", path: "/shorts", icon: <FiPlay className="h-5 w-5 ml-2 mr-3"/>, active: authStatus },
-    { name: "Sign Up", path: "/signup", icon: <FiUser className="h-5 w-5 ml-2 mr-3"/>, active: !authStatus },
-    { name: "Login", path: "/login", icon: <FiLogIn className="h-5 w-5 ml-2 mr-3"/>, active: !authStatus },
+    { name: "Shorts", path: "/shorts", icon: <FiPlay className="h-5 w-5 ml-2 mr-3"/>, active: authStatus }, 
+    { name: "Sign Up", path: "/signup", icon: <FiUser className="h-5 w-5 ml-2 mr-3"/>, active: !authStatus }, 
+    { name: "Login", path: "/login", icon: <FiLogIn className="h-5 w-5 ml-2 mr-3"/>, active: !authStatus }, 
   ];
 
   return (
     <>
+      {/* Conditionally render the sidebar based on the `hidden` prop */}
       {hidden && (
         <aside
           id="sidebar"
@@ -41,22 +42,25 @@ function Sidebar({ hidden }) {
             <div className="flex flex-col flex-1 pt-3 pb-4 overflow-y-auto">
               <div className="flex-1 px-3 space-y-1 divide-y divide-gray-200">
                 <ul>
+                  {/* Loop through navigation items and render those that are active */}
                   {navItems.map(
                     (item, index) =>
-                      item.active && (
+                      item.active && ( // Render only active items
                         <li key={index}>
                           <Link
-                            to={item.path}
+                            to={item.path} // Navigate to the item path
                             className="flex items-center p-2 text-base text-gray-900 rounded-lg hover:bg-gray-100 group "
                           >
-                            {item.icon}
-                            <span className="ml-3 text-md">{item.name}</span>
+                            {item.icon} {/* Render the respective icon */}
+                            <span className="ml-3 text-md">{item.name}</span> {/* Render the item name */}
                           </Link>
                         </li>
                       )
                   )}
+                  {/* Render additional options for authenticated users */}
                   {authStatus && (
                     <>
+                      {/* Section for authenticated users */}
                       <div className="divide-y divide-gray-200">
                         <li>
                           <Link
@@ -67,6 +71,7 @@ function Sidebar({ hidden }) {
                             <span className="ml-3">Subscriptions</span>
                           </Link>
                         </li>
+                        {/* Render 'Your Channel' link if the user has a channel */}
                         <li>
                           {hasChannel && (
                             <Link
@@ -79,6 +84,7 @@ function Sidebar({ hidden }) {
                           )}
                         </li>
                       </div>
+                      {/* Additional links for authenticated users */}
                       <li>
                         <Link
                           to="/history"

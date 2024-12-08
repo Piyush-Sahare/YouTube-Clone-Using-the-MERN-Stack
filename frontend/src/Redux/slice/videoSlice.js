@@ -2,6 +2,15 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
+/*
+  **Initial State**
+  - `videos`: List of all videos.
+  - `userVideos`: Videos uploaded by a specific user.
+  - `video`: Details of a single video.
+  - `loading`: Tracks loading state during API requests.
+  - `error`: Stores error messages if requests fail.
+  - `status`: General status flag (optional, can be expanded for other use cases).
+*/
 const initialState = {
   videos: [],
   userVideos: [],
@@ -11,39 +20,49 @@ const initialState = {
   status: false,
 };
 
+/*
+  **Async Thunks**
+  - Thunks handle asynchronous operations (API calls).
+*/
+
 // Fetch all videos
-export const fetchAllVideos = createAsyncThunk('/api/v1/videos/allVideo', async (_, { rejectWithValue }) => {
-  try {
-    const response = await axios.get('/api/v1/videos/allVideo');
-
-    return response.data.data;
-  } catch (error) {
-
-    return rejectWithValue(error.response.data.message);
+export const fetchAllVideos = createAsyncThunk(
+  '/api/v1/videos/allVideo',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await axios.get('/api/v1/videos/allVideo');
+      return response.data.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data.message);
+    }
   }
-});
+);
 
-// Fetch all videos by a specific user
-export const fetchAllUserVideos = createAsyncThunk('/api/v1/videos/allUserVideo', async (ownerId, { rejectWithValue }) => {
-  try {
-    const response = await axios.get(`/api/v1/videos/allUserVideo/${ownerId}`);
-
-    return response.data.data;
-  } catch (error) {
-
-    return rejectWithValue(error.response.data.message);
+// Fetch videos by a specific user
+export const fetchAllUserVideos = createAsyncThunk(
+  '/api/v1/videos/allUserVideo',
+  async (ownerId, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(`/api/v1/videos/allUserVideo/${ownerId}`);
+      return response.data.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data.message);
+    }
   }
-});
+);
 
 // Fetch video details by ID
-export const fetchVideoById = createAsyncThunk('/api/v1/videos/videoData', async (videoId, { rejectWithValue }) => {
-  try {
-    const response = await axios.get(`/api/v1/videos/videoData/${videoId}`);
-    return response.data.data;
-  } catch (error) {
-    return rejectWithValue(error.response.data.message);
+export const fetchVideoById = createAsyncThunk(
+  '/api/v1/videos/videoData',
+  async (videoId, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(`/api/v1/videos/videoData/${videoId}`);
+      return response.data.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data.message);
+    }
   }
-});
+);
 
 // Publish a new video
 export const publishVideo = createAsyncThunk(
@@ -51,9 +70,7 @@ export const publishVideo = createAsyncThunk(
   async (videoData, { rejectWithValue }) => {
     try {
       const response = await axios.post('/api/v1/videos/publish', videoData, {
-        headers: {
-          'Content-Type': 'multipart/form-data', // Necessary for file uploads
-        },
+        headers: { 'Content-Type': 'multipart/form-data' },
       });
       return response.data.data;
     } catch (error) {
@@ -63,25 +80,32 @@ export const publishVideo = createAsyncThunk(
 );
 
 // Delete a video by ID
-export const deleteVideo = createAsyncThunk('/api/v1/videos/delete', async (videoId, { rejectWithValue }) => {
-  try {
-    const response = await axios.delete(`/api/v1/videos/delete/${videoId}`);
-    return videoId; // Returning video ID for removal from the state
-  } catch (error) {
-    return rejectWithValue(error.response.data.message);
+export const deleteVideo = createAsyncThunk(
+  '/api/v1/videos/delete',
+  async (videoId, { rejectWithValue }) => {
+    try {
+      await axios.delete(`/api/v1/videos/delete/${videoId}`);
+      return videoId; // Return deleted video ID to update state
+    } catch (error) {
+      return rejectWithValue(error.response.data.message);
+    }
   }
-});
+);
 
-// Increment views of a video
-export const incrementView = createAsyncThunk('/api/v1/videos/incrementView', async (videoId, { rejectWithValue }) => {
-  try {
-    const response = await axios.put(`/api/v1/videos/incrementView/${videoId}`);
-    return response.data.data; // Return updated video data after view increment
-  } catch (error) {
-    return rejectWithValue(error.response.data.message);
+// Increment views on a video
+export const incrementView = createAsyncThunk(
+  '/api/v1/videos/incrementView',
+  async (videoId, { rejectWithValue }) => {
+    try {
+      const response = await axios.put(`/api/v1/videos/incrementView/${videoId}`);
+      return response.data.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data.message);
+    }
   }
-});
+);
 
+// Like a video
 export const likeVideo = createAsyncThunk(
   'video/likeVideo',
   async ({ videoId, userId }, { rejectWithValue }) => {
@@ -89,12 +113,12 @@ export const likeVideo = createAsyncThunk(
       const response = await axios.post(`/api/v1/videos/like`, { videoId, userId });
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response.data);
+      return rejectWithValue(error.response.data.message);
     }
   }
 );
 
-// Remove like from a video
+// Remove a like from a video
 export const removeLikeVideo = createAsyncThunk(
   'video/removeLikeVideo',
   async ({ videoId, userId }, { rejectWithValue }) => {
@@ -102,30 +126,30 @@ export const removeLikeVideo = createAsyncThunk(
       const response = await axios.post(`/api/v1/videos/removelike`, { videoId, userId });
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response.data);
+      return rejectWithValue(error.response.data.message);
     }
   }
 );
 
+// Update video details
 export const updateVideo = createAsyncThunk(
   '/api/v1/videos/update',
   async ({ id, formData }, { rejectWithValue }) => {
     try {
       const response = await axios.put(`/api/v1/videos/update/${id}`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data', 
-        },
+        headers: { 'Content-Type': 'multipart/form-data' },
       });
-      //console.log(response.data);
-      return response.data.video; 
-
+      return response.data.video;
     } catch (error) {
       return rejectWithValue(error.response.data.message);
     }
   }
 );
 
-
+/*
+  **Video Slice**
+  - Contains reducers and extraReducers to handle synchronous and asynchronous actions.
+*/
 const videoSlice = createSlice({
   name: 'videos',
   initialState,
@@ -135,143 +159,73 @@ const videoSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    // Handle fetchAllVideos actions
     builder
+      // Fetch all videos
       .addCase(fetchAllVideos.pending, (state) => {
         state.loading = true;
         state.error = null;
-        
       })
       .addCase(fetchAllVideos.fulfilled, (state, action) => {
         state.loading = false;
         state.videos = action.payload;
-        //console.log("state",state.videos);
       })
       .addCase(fetchAllVideos.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
 
-      // Handle fetchAllUserVideos actions
-      .addCase(fetchAllUserVideos.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
+      // Fetch user videos
       .addCase(fetchAllUserVideos.fulfilled, (state, action) => {
         state.loading = false;
-        state.userVideos = action.payload
-      })
-      .addCase(fetchAllUserVideos.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload;
+        state.userVideos = action.payload;
       })
 
-      // Handle fetchVideoById actions
-      .addCase(fetchVideoById.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
+      // Fetch video details
       .addCase(fetchVideoById.fulfilled, (state, action) => {
         state.loading = false;
         state.video = action.payload;
       })
-      .addCase(fetchVideoById.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload;
-      })
 
-      // Handle publishVideo actions
-      .addCase(publishVideo.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
+      // Publish a video
       .addCase(publishVideo.fulfilled, (state, action) => {
         state.loading = false;
-        state.videos.push(action.payload); // Add new video to state
-      })
-      .addCase(publishVideo.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload;
+        state.videos.push(action.payload);
       })
 
-      // Handle deleteVideo actions
-      .addCase(deleteVideo.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
+      // Delete a video
       .addCase(deleteVideo.fulfilled, (state, action) => {
         state.loading = false;
         state.videos = state.videos.filter((video) => video._id !== action.payload);
         state.userVideos = state.userVideos.filter((video) => video._id !== action.payload);
-        //console.log(action.payload);
-      })
-      .addCase(deleteVideo.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload;
       })
 
-      // Handle incrementView actions
-      .addCase(incrementView.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
+      // Increment views
       .addCase(incrementView.fulfilled, (state, action) => {
-        state.loading = false;
         const updatedVideo = action.payload;
         const index = state.videos.findIndex((video) => video._id === updatedVideo._id);
         if (index !== -1) {
-          state.videos[index] = updatedVideo; // Update video in state with new view count
+          state.videos[index] = updatedVideo;
         }
       })
-      .addCase(incrementView.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload;
-      })
+
       // Like a video
-      .addCase(likeVideo.pending, (state) => {
-        state.loading = true;
-      })
       .addCase(likeVideo.fulfilled, (state, action) => {
-        state.loading = false;
-        state.likesCount += 1;
         if (state.video) {
           state.video.likes.push(action.payload.userId);
         }
       })
-      .addCase(likeVideo.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload;
-      })
 
-      // Remove like from a video
-      .addCase(removeLikeVideo.pending, (state) => {
-        state.loading = true;
-      })
+      // Remove a like
       .addCase(removeLikeVideo.fulfilled, (state, action) => {
-        state.loading = false;
-        state.likesCount -= 1;
         if (state.video) {
           state.video.likes = state.video.likes.filter((id) => id !== action.payload.userId);
         }
       })
-      .addCase(removeLikeVideo.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload;
-      })
-      .addCase(updateVideo.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
+
+      // Update a video
       .addCase(updateVideo.fulfilled, (state, action) => {
-        state.loading = false;
         state.video = action.payload;
-
-      })
-      .addCase(updateVideo.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload;
       });
-
   },
 });
 

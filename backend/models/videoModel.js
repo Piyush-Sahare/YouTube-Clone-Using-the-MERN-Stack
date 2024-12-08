@@ -1,68 +1,88 @@
 //backend/models/videoModel.js
-import mongoose, {Schema} from "mongoose";
-import mongooseAggregatePaginate from "mongoose-aggregate-paginate-v2";
+// Importing required modules
+import mongoose, { Schema } from "mongoose";  
+import mongooseAggregatePaginate from "mongoose-aggregate-paginate-v2"; 
 
-const  videoSchema = new Schema(
+// Schema definition for the video model
+const videoSchema = new Schema(
     {
-        videoFile:{
-            type: String,
-            required: true
+        // The path or URL of the video file
+        videoFile: {
+            type: String,         // Data type is String
+            required: true        // Video file is required
         },
-        thumbnail:{
-            type: String,
-            required: true
+
+        // The path or URL of the thumbnail image
+        thumbnail: {
+            type: String,         // Data type is String
+            required: true        // Thumbnail is required
         },
-        title:{
-            type: String,
-            required: true
+
+        // The title of the video
+        title: {
+            type: String,         // Data type is String
+            required: true        // Title is required
         },
-        description:{
-            type: String,
-            required: true
+
+        // A brief description of the video
+        description: {
+            type: String,         // Data type is String
+            required: true        // Description is required
         },
-        duration:{
-            type: Number,
-            default: 0,
+
+        // The duration of the video in seconds
+        duration: {
+            type: Number,         // Data type is Number
+            default: 0            // Default value is 0 (in case the duration is not provided)
         },
-        views:{
-            type:Number,
-            default:0
+
+        // The number of views the video has received
+        views: {
+            type: Number,         // Data type is Number
+            default: 0            // Default value is 0 (initial view count)
         },
+
+        // Reference to the user who owns the video
         owner: {
-            type: Schema.Types.ObjectId,
-            ref: "newUser",
-            required: true
+            type: Schema.Types.ObjectId,   // Type is ObjectId, referencing the 'newUser' model
+            ref: "newUser",                 // Refers to the 'newUser' model for population
+            required: true                  // Owner is required for each video
         },
+
+        // Reference to the channel where the video is uploaded (optional)
         channelId: {
-            type: Schema.Types.ObjectId,
-            ref: "Channel"
+            type: Schema.Types.ObjectId,   // Type is ObjectId, referencing the 'Channel' model
+            ref: "Channel"                 // Refers to the 'Channel' model for population
         },
+
+        // An array of tags associated with the video
         tags: [
             {
-                type: String,
+                type: String,              // Data type is String for each tag
             },
         ],
+
+        // An array of users who liked the video
         likes: [
             {
-                type: Schema.Types.ObjectId,
-                ref: "newUser"
+                type: Schema.Types.ObjectId,   // Type is ObjectId, referencing the 'newUser' model
+                ref: "newUser"                 // Refers to the 'newUser' model for population
             }
         ]
-
     },
     {
-        timestamps: true
+        timestamps: true      // Automatically adds createdAt and updatedAt fields
     }
+);
 
-)
-
-// Method to increment views
+// Method to increment the view count of the video
 videoSchema.methods.incrementViews = async function () {
-    this.views++;
-    await this.save();
-  };
+    this.views++;            // Increment the views count
+    await this.save();       // Save the updated video document
+};
 
-videoSchema.plugin(mongooseAggregatePaginate)
+// Adding pagination functionality to aggregate queries using mongoose-aggregate-paginate-v2 plugin
+videoSchema.plugin(mongooseAggregatePaginate);
 
-
-export const Video = mongoose.model("Video" , videoSchema)
+// Exporting the Video model
+export const Video = mongoose.model("Video", videoSchema);

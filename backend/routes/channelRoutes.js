@@ -8,7 +8,7 @@ import { verifyJWT } from "../middlewares/authMiddleware.js";
 
 const router = Router();
 
-// Route to create a channel
+
 router.route("/create").post(verifyJWT, createChannel);
 router.route("/data/:id").get(getChannel);
 router.route("/update/:id")

@@ -1,5 +1,4 @@
 //frontend/src/page/Shorts.jsx
-
 import React from 'react';
 import { FiAlertTriangle } from "react-icons/fi";
 function Shorts() {

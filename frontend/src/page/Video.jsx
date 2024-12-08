@@ -1,3 +1,4 @@
+// frontend/src/page/Video.jsx
 import React, { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
@@ -6,66 +7,52 @@ import { useToast } from '../hooks/use-toast';
 import CustomVideoPlayer from '../components/CustomVideoPlayer';
 import Comments from '../components/Comments';
 import Recommendation from '../components/Recommendation';
-import { IoMdThumbsUp } from "react-icons/io";
-import { IoMdThumbsDown } from "react-icons/io";
+import { IoMdThumbsUp, IoMdThumbsDown } from "react-icons/io";
 import { subscribeChannel, unsubscribeChannel } from '../Redux/slice/channelSlice';
 
 function Video() {
   const { id } = useParams();
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [videoLoading, setVideoLoading] = useState(true); // New loading state for the video player
   const [isSubscribed, setIsSubscribed] = useState(false);
   const videoData = useSelector((state) => state.video.video);
-  //console.log("data",videoData);
   const authStatus = useSelector((state) => state.auth.status);
   const userId = useSelector((state) => state.auth.user?._id);
   const dispatch = useDispatch();
   const { toast } = useToast();
+
   const likesCount = videoData?.likes?.length || 0;
   const subscribers = videoData?.channelId?.subscribers?.length || 0;
   const [hasLiked, setHasLiked] = useState(false);
-  
 
-  
+  // Helper function to format the video creation date
   const formatDate = (dateString) => {
     const options = { year: 'numeric', month: 'long' };
-    const date = new Date(dateString);
-    return date.toLocaleDateString(undefined, options);
+    return new Date(dateString).toLocaleDateString(undefined, options);
   };
 
+  // Fetch video data
   useEffect(() => {
     const fetchVideoData = async () => {
+      setVideoLoading(true); // Show loading state for video
       try {
-        dispatch(fetchVideoById(id));
+        await dispatch(fetchVideoById(id)).unwrap();
+        await dispatch(incrementView(id)).unwrap();
       } catch (error) {
-        setError(error.message);
+        console.error('Error fetching video:', error);
       } finally {
-        setLoading(false);
+        setVideoLoading(false); // Hide loading state after video fetch
       }
     };
     fetchVideoData();
-  }, [id, videoData]);
+  }, [id, dispatch]);
 
+  // Check subscription status
   useEffect(() => {
-    const incrementViewCount = async () => {
-      try {
-        await dispatch(incrementView(id)).unwrap();
-      } catch (error) {
-        console.error('Error incrementing view count:', error);
-      }
-    };
-    incrementViewCount();
-  }, [id]);
-
-  
-
-
-  useEffect(() => {
-    if (videoData &&  userId) {
+    if (videoData && userId) {
       setIsSubscribed(videoData.channelId.subscribers.includes(userId));
+      setHasLiked(videoData.likes.includes(userId));
     }
   }, [videoData, userId]);
-
 
   const handleSubscribe = async () => {
     if (!authStatus) {
@@ -73,28 +60,27 @@ function Video() {
         variant: "destructive",
         title: "Please log in to subscribe",
       });
-
       return;
     }
 
     try {
       if (isSubscribed) {
         // Unsubscribe
-        await dispatch(unsubscribeChannel(videoData.channelId._id));
-        
+        await dispatch(unsubscribeChannel(videoData.channelId._id)).unwrap();
+        await dispatch(fetchVideoById(id)).unwrap();
         toast({
           title: "Unsubscribed successfully",
         });
+        setIsSubscribed(false); // Update state after successful API call
       } else {
         // Subscribe
-        await dispatch(subscribeChannel(videoData.channelId._id));
-        
+        await dispatch(subscribeChannel(videoData.channelId._id)).unwrap();
+        await dispatch(fetchVideoById(id)).unwrap();
         toast({
           title: "Subscribed successfully",
         });
-        setIsSubscribed(!isSubscribed);
+        setIsSubscribed(true); // Update state after successful API call
       }
-      
     } catch (error) {
       console.error('Error during subscription:', error);
       toast({
@@ -104,66 +90,47 @@ function Video() {
     }
   };
 
-  useEffect(() => {
-    if (videoData && userId) {
-      setHasLiked(videoData.likes.includes(userId));
-    }
-  }, [videoData, userId]);
-
-  const handleLike = () => {
+  const handleLike = async () => {
     if (!authStatus) {
-      toast({
-        variant: "destructive",
-        title: "Please log in to like this video",
-      });
+      toast({ variant: "destructive", title: "Please log in to like this video" });
       return;
     }
-  
+
     if (hasLiked) {
-      dispatch(removeLikeVideo({ videoId: id, userId }));
-      toast({
-        title: "Removed From Liked Videos",
-      });
+      await dispatch(removeLikeVideo({ videoId: id, userId })).unwrap();
+      toast({ title: "Removed From Liked Videos" });
     } else {
-      dispatch(likeVideo({ videoId: id, userId }));
-      toast({
-        title: "Added To Liked Videos",
-      });
+      await dispatch(likeVideo({ videoId: id, userId })).unwrap();
+      toast({ title: "Added To Liked Videos" });
     }
     setHasLiked(!hasLiked);
   };
-  
 
-
-
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error}</div>;
-  if (!videoData) return <div>No video data found.</div>;
-
+  // Show the previous UI until the video finishes loading
   return (
     <div className="bg-white min-h-screen flex flex-wrap">
-      {/* Main Content */}
       <div className="container max-w-[900px] px-4 py-6 mt-3 ml-3">
         <div className="flex flex-col xl:flex-row gap-6">
-          {/* Video Player Section */}
           <div className="flex-1">
-            <CustomVideoPlayer src={videoData.videoFile} />
-            <h1 className="mt-4 text-2xl font-semibold">{videoData.title}</h1>
+            {/* Video Player */}
+            {videoLoading ? (
+              <div className="w-full h-[400px] flex items-center justify-center bg-gray-200">
+                <p>Loading video...</p>
+              </div>
+            ) : (
+              <CustomVideoPlayer src={videoData.videoFile} />
+            )}
 
-            {/* Video Metadata */}
+            <h1 className="mt-4 text-2xl font-semibold">{videoData?.title}</h1>
             <div className="mt-2 flex items-center justify-between text-sm text-gray-600">
               <div className="flex items-center gap-3">
-                <Link
-                  to={`/Channel/${videoData.channelId._id}`}
-                  className="flex items-center gap-2 hover:text-black"
-                >
+                <Link to={`/Channel/${videoData?.channelId?._id}`} className="flex items-center gap-2 hover:text-black">
                   <img
                     className="w-10 h-10 rounded-full"
-                    src={videoData.channelId.avatar}
+                    src={videoData?.channelId?.avatar}
                     alt="Channel Avatar"
                   />
-                    
-                    <div className='flex flex-col w-20'>
+                  <div className='flex flex-col w-32'>
                     <span className="font-medium">{videoData.channelId.name}</span>
                     {subscribers > 0 && (
                       <span className="font-medium">
@@ -172,7 +139,6 @@ function Video() {
                     )}
                   </div>
                 </Link>
-
                 <button
                   onClick={handleSubscribe}
                   className={`text-white w-28 p-2 ml-3 rounded-full px-4 ${isSubscribed ? 'bg-gray-500' : 'bg-black'
@@ -180,42 +146,36 @@ function Video() {
                 >
                   {isSubscribed ? 'Unsubscribe' : 'Subscribe'}
                 </button>
-                </div>
-                <div className="flex items-center justify-between rounded-full w-[90px] bg-gray-200 mr-2">
-                  {/* Like Button */}
-                  <button
-                    onClick={handleLike}
-                    className="flex items-center  text-black p-2 rounded-full  hover:bg-gray-300"
-                  >
-                    <IoMdThumbsUp className={`text-2xl ${hasLiked ? 'text-blue-500' : 'text-black'}`} />
-  
-                    {likesCount > 0 && <span>{likesCount}</span>}
-                  </button>
-                  <button className="flex items-center  text-black p-2 rounded-full hover:bg-gray-300">
-                    <IoMdThumbsDown className="text-2xl text-black'" />
-                  </button>
-                </div>
-              
+              </div>
+              <div className="flex items-center justify-between rounded-full w-[90px] bg-gray-200 mr-2">
+                <button onClick={handleLike} className="flex items-center  text-black p-2 rounded-full hover:bg-gray-300">
+                  <IoMdThumbsUp className={`text-2xl ${hasLiked ? 'text-blue-500' : 'text-black'}`} />
+                  {likesCount > 0 && <span>{likesCount}</span>}
+                </button>
+                <button className="flex items-center  text-black p-2 rounded-full hover:bg-gray-300">
+                  <IoMdThumbsDown className="text-2xl text-black" />
+                </button>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Video Description */}
         <div className="mt-6 p-4 bg-gray-100 rounded shadow-sm">
           <div className="flex items-center gap-3">
-            <span>{videoData.views} views</span>
-            <span>{formatDate(videoData.createdAt)}</span>
+            <span>{videoData?.views} views</span>
+            <span>{formatDate(videoData?.createdAt)}</span>
           </div>
-          <p className="text-sm text-gray-700">{videoData.description}</p>
+          <p className="text-sm text-gray-700">{videoData?.description}</p>
         </div>
+
         <Comments videoId={id} />
       </div>
 
-      {/* Suggested Videos */}
       <div className="w-full xl:w-96 mt-8">
+        {/* Recommendations stay visible */}
         <Recommendation
-          currentVideoTags={videoData.tags}
-          currentVideoId={videoData._id}
+          currentVideoTags={videoData?.tags}
+          currentVideoId={videoData?._id}
         />
       </div>
     </div>

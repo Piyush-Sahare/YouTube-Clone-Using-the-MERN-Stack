@@ -1,10 +1,6 @@
 // backend/routes/tagsRoutes.js
 import express from "express";
-import {
-    createTag,
-    getAllTags,
-    deleteTag,
-} from "../controllers/tagsController.js";
+import { createTag, getAllTags, deleteTag, } from "../controllers/tagsController.js";
 
 const router = express.Router();
 
