@@ -1,6 +1,6 @@
 //backend/controllers/commentsController.js
 // Import necessary modules and utilities
-import { Comment } from '../models/Comment.js'; // Comment model
+import { Comment } from '../models/CommentModel.js'; // Comment model
 import { asyncHandler } from "../utils/asyncHandler.js"; // Async error handling wrapper
 import { ApiResponse } from "../utils/ApiResponse.js"; // Standardized API response format
 import { ApiError } from "../utils/ApiError.js"; // Custom error handler

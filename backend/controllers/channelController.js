@@ -1,7 +1,7 @@
 //backend/controllers/channelController.js
 // Importing required models and utilities
 import { Channel } from "../models/channelModel.js";
-import { newUser } from "../models/accountModel.js";
+import { newUser } from "../models/userModel.js";
 import { Video } from "../models/videoModel.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { asyncHandler } from "../utils/asyncHandler.js";

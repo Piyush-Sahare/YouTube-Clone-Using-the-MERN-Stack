@@ -1,4 +1,4 @@
-//backend/models/accountModel.js
+//backend/models/userModel.js
 // Importing required modules
 import mongoose, { Schema } from "mongoose"; 
 import jwt from "jsonwebtoken"; 

@@ -1,4 +1,4 @@
-//backend/models/Comment.js
+//backend/models/CommentModel.js
 // Importing required modules
 import mongoose, { Schema } from "mongoose"; 
 

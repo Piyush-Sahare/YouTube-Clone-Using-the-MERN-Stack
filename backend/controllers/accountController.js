@@ -1,8 +1,8 @@
 //backend/controllers/accountController.js
 // Importing required models and utilities
-import { newUser } from "../models/accountModel.js"; 
+import { newUser } from "../models/userModel.js"; 
 import { Video } from "../models/videoModel.js"; 
-import { Comment } from "../models/Comment.js";
+import { Comment } from "../models/CommentModel.js";
 import { Channel } from "../models/channelModel.js";
 import { asyncHandler } from "../utils/asyncHandler.js"; 
 import { ApiResponse } from "../utils/ApiResponse.js"; 
