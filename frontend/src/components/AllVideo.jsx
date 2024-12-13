@@ -73,14 +73,14 @@ function AllVideo() {
 
   // Main return block, rendering the video list
   return (
-    <div className="lg:mt-8 bg-white grid grid-cols-1 px-8 pt-6 xl:grid-cols-3 xl:gap-4">
+    <div className="lg:mt-8 bg-white grid grid-cols-1  pt-5 xl:grid-cols-3 xl:gap-3">
       <div className="mb-4 col-span-full xl:mb-2">
         <section>
           <div className="container">
-            <div className="grid grid-cols-1 px-4 pt-3 xl:grid-cols-3 xl:gap-4">
+            <div className="grid grid-cols-1 px-4 pt-3 md:grid-cols-2 xl:grid-cols-3 xl:gap-4">
               {/* Map over the list of videos and display each one */}
               {videos.map((video) => (
-                <div key={video._id} className="bg-white rounded-lg max-w-[380px] relative">
+                <div key={video._id} className="bg-white m-1 rounded-lg max-w-[360px] relative">
                   <div className="relative">
                     {/* Link to video page */}
                     <Link to={`/watch/${video._id}`}>

@@ -135,9 +135,9 @@ const Channel = () => {
 
             {/* Videos Section */}
             <h1 className='text-2xl font-bold'>Home</h1>
-            <div className="grid grid-cols-1 px-4 pt-3 xl:grid-cols-3 xl:gap-4">
+            <div className="grid grid-cols-1 px-4 pt-3 md:grid-cols-2 xl:grid-cols-3 xl:gap-4">
                 {videos.map((video) => (
-                    <div key={video._id} className="bg-white rounded-lg max-w-[380px]">
+                    <div key={video._id} className="bg-white rounded-lg max-w-[360px] m-1">
                         <div className="relative">
                             <Link to={`/watch/${video._id}`}>
                                 <img
