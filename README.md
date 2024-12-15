@@ -125,8 +125,8 @@ Follow these steps to set up and run the YouTube Clone application on your local
    npm install
    npm run dev
 
-   # Navigate to the backend folder 
-   cd ../backend
+   # Open New Terminal and Navigate to the backend folder 
+   cd backend
    npm install
    npm run dev
    ```
